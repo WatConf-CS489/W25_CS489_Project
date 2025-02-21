@@ -3,16 +3,12 @@ services:
     container_name: frontend
     build:
       context: ./frontend
-    volumes:
-      - /usr/src/app/node_modules
   backend:
     container_name: backend
     build:
       context: ./backend
     depends_on:
       - db
-    volumes:
-      - /usr/src/app/.venv
   db:
     image: postgres:17
     container_name: db

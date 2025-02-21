@@ -3,8 +3,8 @@ services:
     build:
       dockerfile: Dockerfile.prod
   backend:
-    volumes:
-      - ./backend:/usr/src/app
+    build:
+      dockerfile: Dockerfile.prod
   nginx:
     build:
       dockerfile: Dockerfile.prod

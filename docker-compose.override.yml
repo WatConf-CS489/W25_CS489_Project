@@ -1,16 +1,20 @@
 # the default dev override file
 
 services:
-  backend:
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend:/usr/src/app
   frontend:
     build:
       dockerfile: Dockerfile.dev
     volumes:
       - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+  backend:
+    build:
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/.venv
   db:
     ports:
       - "5432:5432"
