@@ -1,17 +1,9 @@
 "use client";
 
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { API_URL } from "./constants";
 
-const queryClient = new QueryClient()
-
 export default function Page() {
-  return <QueryClientProvider client={queryClient}>
-    <Content />
-  </QueryClientProvider>;
-}
-
-function Content() {
   const response = useQuery({
     queryKey: ["hello"],
     queryFn: async () => {

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import RootQueryProvider from "@/components/RootQueryProvider";
 
 export const metadata: Metadata = {
   title: "WatConfessions",
@@ -13,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <RootQueryProvider>
+          {children}
+        </RootQueryProvider>
+      </body>
     </html>
   );
 }
