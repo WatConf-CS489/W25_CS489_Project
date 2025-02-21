@@ -1,12 +1,12 @@
 services:
   frontend:
+    container_name: frontend
     build: ./frontend
-    ports:
-      - "3000:3000"
     volumes:
       - ./frontend:/usr/src/app
       - /usr/src/app/node_modules
   backend:
+    container_name: backend
     build: ./backend
     depends_on:
       - db
@@ -24,3 +24,12 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - /var/lib/postgresql/data
+  nginx:
+    build: ./nginx
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - frontend
+      - backend
