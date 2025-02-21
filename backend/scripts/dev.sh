@@ -3,4 +3,4 @@
 set -e
 
 uv sync --frozen
-uv run gunicorn --reload app:app
+uv run gunicorn --reload src.app:app
