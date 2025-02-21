@@ -8,8 +8,19 @@ services:
       - /usr/src/app/node_modules
   backend:
     build: ./backend
+    depends_on:
+      - db
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/.venv
+  db:
+    image: postgres:17
+    container_name: db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+    volumes:
+      - /var/lib/postgresql/data

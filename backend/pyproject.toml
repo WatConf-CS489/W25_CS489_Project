@@ -5,7 +5,10 @@ requires-python = ">=3.12"
 dependencies = [
     "flask>=3.1.0",
     "flask-cors>=5.0.0",
+    "flask-sqlalchemy>=3.1.1",
     "gunicorn>=23.0.0",
     "inotify>=0.2.10",
+    "psycopg2-binary>=2.9.10",
+    "sqlalchemy>=2.0.38",
     "types-flask-cors>=5.0.0.20240902",
 ]

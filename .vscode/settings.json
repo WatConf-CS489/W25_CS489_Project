@@ -13,4 +13,7 @@
   "files.associations": {
     "*.css": "tailwindcss",
   },
+  "python.analysis.extraPaths": [
+    "./backend",
+  ],
 }
