@@ -25,3 +25,12 @@ To get intellisense when working on the frontend locally,
 2. Run `uv sync` in the `backend` directory
 3. Install any necessary IDE extensions (Python in VSCode)
 4. Activate the virtual env at `backend/.venv` if necessary (not needed for VSC: already set in `settings.json`.)
+
+## Production
+
+Use `docker compose` as before, but use the prod compose file:
+
+```bash
+export COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml
+docker compose up --build
+```

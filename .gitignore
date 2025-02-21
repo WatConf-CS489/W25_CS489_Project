@@ -1,3 +1,6 @@
+# general
+/.env
+
 # backend
 __pycache__
 .mypy_cache

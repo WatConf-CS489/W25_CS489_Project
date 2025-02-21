@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build:
+      dockerfile: Dockerfile.prod
+  backend:
+    volumes:
+      - ./backend:/usr/src/app
+  nginx:
+    build:
+      dockerfile: Dockerfile.prod

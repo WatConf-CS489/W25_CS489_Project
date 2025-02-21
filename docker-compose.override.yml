@@ -1,0 +1,21 @@
+# the default dev override file
+
+services:
+  backend:
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/usr/src/app
+  frontend:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/usr/src/app
+  db:
+    ports:
+      - "5432:5432"
+  nginx:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
