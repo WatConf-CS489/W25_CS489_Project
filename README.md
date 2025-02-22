@@ -9,6 +9,8 @@ If you just want to run the BE+FE,
 1. Install [Docker](https://www.docker.com)
 2. Run `make`
 
+You can then access the website at <http://localhost:3000>.
+
 Both the BE and FE have hot reloading, so refreshing the page should be sufficient to update things. But in some cases (such as adding a new dependency) you may need to run `make` again to restart.
 
 Run `make down` to fully shut down the containers.
