@@ -1,6 +1,6 @@
 from sqlalchemy import text
 from src.base import app
-from src.base import db
+from src.extensions import db
 
 
 @app.route("/hello")

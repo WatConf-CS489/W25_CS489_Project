@@ -7,9 +7,11 @@ W25 CS489 (Secure Programming) Project
 If you just want to run the BE+FE,
 
 1. Install [Docker](https://www.docker.com)
-2. Run `docker compose up --build`
+2. Run `make`
 
-Both the BE and FE have hot reloading, so refreshing the page should be sufficient to update things. But in some cases (such as adding a new dependency) you may need to run the `docker` command again to restart.
+Both the BE and FE have hot reloading, so refreshing the page should be sufficient to update things. But in some cases (such as adding a new dependency) you may need to run `make` again to restart.
+
+Run `make down` to fully shut down the containers.
 
 ### Frontend IDE Support
 
@@ -26,11 +28,14 @@ To get intellisense when working on the frontend locally,
 3. Install any necessary IDE extensions (Python in VSCode)
 4. Activate the virtual env at `backend/.venv` if necessary (not needed for VSC: already set in `settings.json`.)
 
+### DB Stuff
+
+- Create a new migration with `make revision`
+
 ## Production
 
-Use `docker compose` as before, but use the prod compose file:
+Set `PROD=1`:
 
 ```bash
-export COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml
-docker compose up --build
+make PROD=1
 ```

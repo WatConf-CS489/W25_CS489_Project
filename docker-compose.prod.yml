@@ -3,6 +3,8 @@ services:
     build:
       dockerfile: Dockerfile.prod
   backend:
+    env_file:
+      - backend/envs/dev.env
     build:
       dockerfile: Dockerfile.prod
   nginx:

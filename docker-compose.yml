@@ -4,6 +4,8 @@ services:
     build:
       context: ./frontend
   backend:
+    env_file:
+      - backend/envs/common.env
     container_name: backend
     build:
       context: ./backend
@@ -15,7 +17,7 @@ services:
     environment:
       POSTGRES_PASSWORD: password
     volumes:
-      - /var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
   nginx:
     build: ./nginx
     ports:
@@ -23,3 +25,5 @@ services:
     depends_on:
       - frontend
       - backend
+volumes:
+  db_data:
