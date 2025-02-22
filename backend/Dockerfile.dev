@@ -1,7 +1,12 @@
 FROM python:3.12
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
+RUN groupadd --gid 1001 me && useradd --uid 1001 --gid 1001 -m me
+USER me
+
 WORKDIR /usr/src/app
+# make sure we own .venv when we bind mount it
+RUN mkdir /usr/src/app/.venv
 
 EXPOSE 8000/tcp
 ENTRYPOINT [ "scripts/dev.sh" ]

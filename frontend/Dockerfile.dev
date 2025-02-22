@@ -1,6 +1,10 @@
 FROM oven/bun:latest
 
+USER bun
+
 WORKDIR /usr/src/app
+# make sure we own node_modules when we bind mount it
+RUN mkdir /usr/src/app/node_modules
 
 EXPOSE 3000/tcp
 ENTRYPOINT [ "scripts/dev.sh" ]

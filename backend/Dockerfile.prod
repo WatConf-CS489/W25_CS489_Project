@@ -1,6 +1,9 @@
 FROM python:3.12
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
+RUN groupadd --gid 1001 me && useradd --uid 1001 --gid 1001 -m me
+USER me
+
 WORKDIR /usr/src/app
 
 COPY pyproject.toml uv.lock ./
