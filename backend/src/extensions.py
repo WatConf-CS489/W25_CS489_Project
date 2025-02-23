@@ -3,6 +3,7 @@ import logging
 from flask_alembic import Alembic
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from redis import Redis
 from src.base import app, DBModel
 
 logging.getLogger().setLevel(logging.INFO)
@@ -22,3 +23,5 @@ alembic.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+r = Redis(host="redis", port=6379, db=0, protocol=3)
