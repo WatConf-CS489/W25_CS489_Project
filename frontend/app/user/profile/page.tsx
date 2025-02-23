@@ -23,7 +23,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col gap-4 max-w-sm mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <div>Profiles</div>
+      <div>Profile</div>
       <div>{data?.message ?? "Loading message..."}</div>
       <button
         onClick={logout}
