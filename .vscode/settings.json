@@ -17,4 +17,5 @@
   "python.analysis.extraPaths": [
     "./backend",
   ],
+  "mypy-type-checker.cwd": "${workspaceFolder}/backend",
 }

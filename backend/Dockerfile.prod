@@ -12,4 +12,4 @@ RUN uv sync --frozen
 COPY . .
 
 EXPOSE 8000/tcp
-ENTRYPOINT [ "uv", "run", "gunicorn", "src" ]
+ENTRYPOINT [ "scripts/prod.sh" ]

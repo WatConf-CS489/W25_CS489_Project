@@ -17,6 +17,11 @@ down:
 revision:
 	./backend/scripts/revision.sh $(MESSAGE)
 
+.PHONY: upgrade
+# upgrade the database
+upgrade:
+	docker compose run --rm backend flask db upgrade
+
 .PHONY: shell
 # start the backend container with a shell (don't start the server)
 shell:
@@ -26,3 +31,8 @@ shell:
 # start a *new* shell in the backend container
 exec:
 	docker compose exec -it backend bash -c "source .venv/bin/activate && bash"
+
+.PHONY: logs
+# show logs
+logs:
+	docker compose logs -f

@@ -1,7 +1,7 @@
 from sqlalchemy import text
 from src.base import app
 from src.extensions import db
-
+import src.auth.routes
 
 @app.route("/hello")
 def hello_world():
