@@ -13,7 +13,7 @@
   "files.associations": {
     "*.css": "tailwindcss",
     "*.env": "properties",
-    "default.conf": "nginx",
+    "*.conf.template": "nginx",
   },
   "python.analysis.extraPaths": [
     "./backend",

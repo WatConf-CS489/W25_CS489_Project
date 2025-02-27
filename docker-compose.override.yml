@@ -26,8 +26,6 @@ services:
   nginx:
     build:
       dockerfile: Dockerfile.dev
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
 volumes:
   backend_dev:
   frontend_dev:
