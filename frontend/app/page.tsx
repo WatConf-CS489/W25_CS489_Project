@@ -54,12 +54,13 @@ export default function Page() {
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
+            id="remember"
             name="remember"
             className="h-4 w-4"
             checked={remember}
             onChange={(e) => setRemember(e.target.checked)}
           />{" "}
-          <span>Remember me</span>
+          <label htmlFor="remember">Remember me</label>
         </div>
         <button
           type="submit"
