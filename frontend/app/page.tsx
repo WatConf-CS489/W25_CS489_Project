@@ -2,7 +2,7 @@
 
 import { API_URL } from "@/constants";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { startAuthentication } from "@simplewebauthn/browser";
 import Button from "@mui/material/Button";
@@ -11,30 +11,55 @@ export default function Page() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [remember, setRemember] = useState(false);
+
+  const submit = useCallback(
+    async (username: string | null) => {
+      try {
+        const response = await fetch(`${API_URL}/auth/login/start`, {
+          method: "POST",
+          body: JSON.stringify({ username }),
+        });
+        const { challenge_id, options } = await response.json();
+        const credential = await startAuthentication({
+          optionsJSON: JSON.parse(options),
+          useBrowserAutofill: username === null,
+        });
+        const finishResponse = await fetch(`${API_URL}/auth/login/finish`, {
+          method: "POST",
+          body: JSON.stringify({
+            credential: JSON.stringify(credential),
+            challenge_id,
+            remember,
+          }),
+        });
+        const finishResponseJson = await finishResponse.json();
+        if (finishResponseJson.verified) {
+          router.push("/");
+        } else {
+          console.error("Login failed", { finishResponseJson });
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+          console.log("Login aborted");
+        } else {
+          console.error("Login failed", { error });
+        }
+      }
+    },
+    [router, remember]
+  );
+
+  useEffect(
+    () => {
+      submit(null);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const response = await fetch(`${API_URL}/auth/login/start`, {
-      method: "POST",
-      body: JSON.stringify({ username }),
-    });
-    const { challenge_id, options } = await response.json();
-    const credential = await startAuthentication({
-      optionsJSON: JSON.parse(options),
-    });
-    const finishResponse = await fetch(`${API_URL}/auth/login/finish`, {
-      method: "POST",
-      body: JSON.stringify({
-        credential: JSON.stringify(credential),
-        challenge_id,
-        remember,
-      }),
-    });
-    const finishResponseJson = await finishResponse.json();
-    if (finishResponseJson.verified) {
-      router.push("/");
-    } else {
-      console.error("Login failed", { finishResponseJson });
-    }
+    await submit(username);
   };
 
   return (
@@ -46,6 +71,7 @@ export default function Page() {
         <input
           type="text"
           name="username"
+          autoComplete="username webauthn"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
