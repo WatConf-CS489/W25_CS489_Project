@@ -23,9 +23,6 @@ services:
   redis:
     ports:
       - "6379:6379"
-  nginx:
-    build:
-      dockerfile: Dockerfile.dev
 volumes:
   backend_dev:
   frontend_dev:

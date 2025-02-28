@@ -9,10 +9,10 @@ from src.auth.user import PasskeyCredential, User
 from src.extensions import db, r
 from src.base import app
 
-rp_id = "localhost"
+rp_id = "local.kabir.dev"
 rp_name = "WatConfessions"
 rp_origins = [
-    "http://localhost:3000"
+    "https://local.kabir.dev",
 ]
 
 class RegisterStartRequest(BaseModel):
