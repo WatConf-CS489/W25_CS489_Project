@@ -5,7 +5,18 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 import { startAuthentication } from "@simplewebauthn/browser";
-import Button from "@mui/material/Button";
+import {
+  Button,
+  Checkbox,
+  Container,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  Link,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 export default function Page() {
   const router = useRouter();
@@ -49,61 +60,54 @@ export default function Page() {
     [router, remember]
   );
 
-  useEffect(
-    () => {
-      submit(null);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await submit(username);
   };
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 max-w-sm mx-auto mt-8 p-6 bg-white rounded-lg shadow-md"
-      >
-        <input
-          type="text"
-          name="username"
-          autoComplete="username webauthn"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Username"
-        />
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="remember"
-            name="remember"
-            className="h-4 w-4"
-            checked={remember}
-            onChange={(e) => setRemember(e.target.checked)}
-          />{" "}
-          <label htmlFor="remember">Remember me</label>
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
-        >
-          Log in
-        </button>
-        <Button variant="contained">
-          Nonfunctional button
-        </Button>
-        <a
-          href="/register"
-          className="text-blue-500 hover:text-blue-600 transition-colors"
-        >
-          Register
-        </a>
-      </form>
-    </>
+    <Container className="h-screen flex flex-col justify-center">
+      <Typography align="center" variant="h1" className="mb-10">
+        WATConfessions
+      </Typography>
+      <Container maxWidth="xs">
+        <form onSubmit={(e) => handleSubmit(e)}>
+          <Stack
+            className="bg-white rounded-lg shadow-xl px-10 py-12"
+            spacing={1}
+          >
+            <TextField
+              className="bg-slate-100"
+              label="Username"
+              variant="outlined"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                />
+              }
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ backgroundColor: "#3A3A3A" }}
+            >
+              Log in
+            </Button>
+            <Divider variant="middle" className="p-2" />
+            <Typography align="center">
+              New to WATConfessions?{" "}
+              <Link href="/register" underline="hover">
+                Sign up!
+              </Link>
+            </Typography>
+          </Stack>
+        </form>
+      </Container>
+    </Container>
   );
 }
