@@ -22,7 +22,7 @@ def sign_blinded_ticket(blinded_ticket: str) -> str:
     # RSA-PSS the *client* is responsible for calling EMSA-PSS-ENCODE during
     # the blinding operation.
     em_int = bytes_to_long(ticket_bytes)
-    signature: bytes = scheme._key._decrypt_to_bytes(em_int)  # type: ignore
+    signature: bytes = rsa_key._decrypt_to_bytes(em_int)  # type: ignore
 
     return signature.hex()
 
