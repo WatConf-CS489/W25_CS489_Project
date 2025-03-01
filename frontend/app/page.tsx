@@ -5,12 +5,26 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 import { startAuthentication } from "@simplewebauthn/browser";
-import Button from "@mui/material/Button";
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Container,
+  Divider,
+  FormControlLabel,
+  Link,
+  Snackbar,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 export default function Page() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [remember, setRemember] = useState(false);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const submit = useCallback(
     async (username: string | null) => {
@@ -36,74 +50,92 @@ export default function Page() {
         if (finishResponseJson.verified) {
           router.push("/");
         } else {
-          console.error("Login failed", { finishResponseJson });
+          setError(true);
+          setLoading(false);
         }
       } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") {
-          console.log("Login aborted");
-        } else {
-          console.error("Login failed", { error });
-        }
+        setError(true);
+        setLoading(false);
       }
     },
     [router, remember]
   );
 
-  useEffect(
-    () => {
-      submit(null);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     await submit(username);
   };
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 max-w-sm mx-auto mt-8 p-6 bg-white rounded-lg shadow-md"
+    <Container className="h-screen flex flex-col justify-center">
+      <Typography
+        align="center"
+        variant="h1"
+        sx={{
+          position: "absolute",
+          top: "10%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          userSelect: "none",
+        }}
       >
-        <input
-          type="text"
-          name="username"
-          autoComplete="username webauthn"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Username"
-        />
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="remember"
-            name="remember"
-            className="h-4 w-4"
-            checked={remember}
-            onChange={(e) => setRemember(e.target.checked)}
-          />{" "}
-          <label htmlFor="remember">Remember me</label>
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
-        >
-          Log in
-        </button>
-        <Button variant="contained">
-          Nonfunctional button
-        </Button>
-        <a
-          href="/register"
-          className="text-blue-500 hover:text-blue-600 transition-colors"
-        >
-          Register
-        </a>
-      </form>
-    </>
+        WATConfessions
+      </Typography>
+      <Container maxWidth="xs" sx={{ marginTop: 10 }}>
+        <form onSubmit={(e) => handleSubmit(e)}>
+          <Stack
+            className="bg-white rounded-lg shadow-xl px-10 py-12"
+            spacing={1}
+          >
+            <TextField
+              className="bg-slate-100"
+              label="Username"
+              variant="outlined"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                />
+              }
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              loading={loading}
+              variant="contained"
+              sx={{ backgroundColor: "#3A3A3A" }}
+            >
+              Log in
+            </Button>
+            <Snackbar
+              open={error}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              autoHideDuration={3000}
+              onClose={() => setError(false)}
+            >
+              <Alert
+                severity="error"
+                variant="filled"
+                sx={{ width: "100%" }}
+                onClose={() => setError(false)}
+              >
+                Login has failed.
+              </Alert>
+            </Snackbar>
+            <Divider variant="middle" className="p-2" />
+            <Typography align="center">
+              New to WATConfessions?{" "}
+              <Link href="/register" underline="hover">
+                Sign up!
+              </Link>
+            </Typography>
+          </Stack>
+        </form>
+      </Container>
+    </Container>
   );
 }
