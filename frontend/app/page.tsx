@@ -6,13 +6,14 @@ import { useCallback, useEffect, useState } from "react";
 
 import { startAuthentication } from "@simplewebauthn/browser";
 import {
+  Alert,
   Button,
   Checkbox,
   Container,
   Divider,
-  FormControl,
   FormControlLabel,
   Link,
+  Snackbar,
   Stack,
   TextField,
   Typography,
@@ -22,6 +23,8 @@ export default function Page() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [remember, setRemember] = useState(false);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const submit = useCallback(
     async (username: string | null) => {
@@ -47,14 +50,12 @@ export default function Page() {
         if (finishResponseJson.verified) {
           router.push("/");
         } else {
-          console.error("Login failed", { finishResponseJson });
+          setError(true);
+          setLoading(false);
         }
       } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") {
-          console.log("Login aborted");
-        } else {
-          console.error("Login failed", { error });
-        }
+        setError(true);
+        setLoading(false);
       }
     },
     [router, remember]
@@ -62,15 +63,26 @@ export default function Page() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     await submit(username);
   };
 
   return (
     <Container className="h-screen flex flex-col justify-center">
-      <Typography align="center" variant="h1" className="mb-10">
+      <Typography
+        align="center"
+        variant="h1"
+        sx={{
+          position: "absolute",
+          top: "10%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          userSelect: "none",
+        }}
+      >
         WATConfessions
       </Typography>
-      <Container maxWidth="xs">
+      <Container maxWidth="xs" sx={{ marginTop: 10 }}>
         <form onSubmit={(e) => handleSubmit(e)}>
           <Stack
             className="bg-white rounded-lg shadow-xl px-10 py-12"
@@ -93,11 +105,27 @@ export default function Page() {
             />
             <Button
               type="submit"
+              loading={loading}
               variant="contained"
               sx={{ backgroundColor: "#3A3A3A" }}
             >
               Log in
             </Button>
+            <Snackbar
+              open={error}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              autoHideDuration={3000}
+              onClose={() => setError(false)}
+            >
+              <Alert
+                severity="error"
+                variant="filled"
+                sx={{ width: "100%" }}
+                onClose={() => setError(false)}
+              >
+                Login has failed.
+              </Alert>
+            </Snackbar>
             <Divider variant="middle" className="p-2" />
             <Typography align="center">
               New to WATConfessions?{" "}
