@@ -12,6 +12,11 @@ up:
 down:
 	docker compose down
 
+.PHONY: reset
+# stop services and remove volumes
+reset:
+	docker compose down -v
+
 .PHONY: revision
 # create a new Alembic migration
 revision:

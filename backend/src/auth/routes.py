@@ -7,6 +7,7 @@ from src.extensions import db
 from pydantic import BaseModel
 import src.auth.registration_routes
 import src.auth.login_routes
+import src.auth.verification_routes
 
 @app.route("/auth/logout", methods=["POST"])
 def logout():

@@ -1,37 +1,22 @@
 "use client";
 
 import { API_URL } from "@/constants";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { startRegistration } from "@simplewebauthn/browser";
-
 export default function Page() {
-  const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const startResponse = await fetch(`${API_URL}/auth/register/start`, {
+    const startResponse = await fetch(`${API_URL}/auth/verify/send`, {
       method: "POST",
-      body: JSON.stringify({ username }),
+      body: JSON.stringify({ email }),
     });
-    const { challenge_id: challengeID, options } = await startResponse.json();
-    const credential = await startRegistration({
-      optionsJSON: JSON.parse(options),
-    });
-    const finishResponse = await fetch(`${API_URL}/auth/register/finish`, {
-      method: "POST",
-      body: JSON.stringify({
-        credential: JSON.stringify(credential),
-        challenge_id: challengeID,
-      }),
-    });
-    const response = await finishResponse.json();
-    if (response.verified) {
-      router.push("/");
+    if (startResponse.ok) {
+      setStatus("If this email is unregistered, you will receive next steps shortly.");
     } else {
-      console.error("Registration failed", { response });
+      setStatus("Registration failed. Is the email valid?")
     }
   };
 
@@ -41,20 +26,25 @@ export default function Page() {
         onSubmit={handleSubmit}
         className="flex flex-col gap-4 max-w-sm mx-auto mt-8 p-6 bg-white rounded-lg shadow-md"
       >
+        <h1 className="text-2xl font-semibold">Register</h1>
+        <p className="text-gray-500">
+          Enter your @uwaterloo.ca email.
+        </p>
         <input
           type="text"
-          name="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Username"
+          placeholder="Email"
         />
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
         >
-          Register
+          Send Email
         </button>
+        {status && <p>{status}</p>}
       </form>
     </>
   );

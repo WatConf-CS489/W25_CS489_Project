@@ -10,6 +10,7 @@ dependencies = [
     "gunicorn>=23.0.0",
     "inotify>=0.2.10",
     "psycopg2-binary>=2.9.10",
+    "pycryptodomex==3.21.0", # pinned since we use a private API
     "pydantic>=2.10.6",
     "redis>=5.2.1",
     "sqlalchemy>=2.0.38",
