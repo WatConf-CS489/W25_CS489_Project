@@ -27,6 +27,7 @@ def is_valid_email(email: str) -> bool:
 
 def send_email_code(email: str, code: str):
     link = f"https://local.kabir.dev/register/verify?code={code}"
+    # TODO: send email
     app.logger.info(f"Sending email to '{email}' with code '{code}'. Link: {link}")
 
 
