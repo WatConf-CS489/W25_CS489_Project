@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from webauthn import generate_registration_options, options_to_json, verify_registration_response
 from webauthn.registration.verify_registration_response import parse_registration_credential_json
+from src.auth.ticket import verify_ticket
 from src.auth.user import PasskeyCredential, User
 from src.extensions import db, r
 from src.base import app
@@ -26,7 +27,6 @@ class RegistrationChallengeDTO(BaseModel):
     challenge: str
     username: str
 
-# registration_challenges: dict[str, RegistrationChallengeDTO] = {}
 
 @app.route("/auth/register/start", methods=["POST"])
 def handler_registration_options():
@@ -59,10 +59,17 @@ def handler_registration_options():
 class RegisterRequest(BaseModel):
     credential: str
     challenge_id: str
+    ticket: str
+    ticket_signature: str
+    remember: bool
 
 @app.route("/auth/register/finish", methods=["POST"])
 def handler_register():
     body = RegisterRequest.model_validate_json(request.data)
+
+    if not verify_ticket(body.ticket, body.ticket_signature):
+        return jsonify({"error": "Invalid ticket"}), 400
+
     dto = r.get(f"registration_challenge:{body.challenge_id}")
     if not isinstance(dto, bytes):
         return jsonify({"error": "Challenge not found"}), 400
@@ -88,7 +95,7 @@ def handler_register():
     except Exception as err:
         return {"verified": False, "msg": str(err), "status": 400}
 
-    user = User(username=username)
+    user = User(username=username, ticket=body.ticket)
     db.session.add(user)
     db.session.flush()
 
@@ -102,6 +109,6 @@ def handler_register():
     db.session.add(passkey)
     db.session.commit()
 
-    login_user(user)
+    login_user(user, remember=body.remember)
 
     return {"verified": True}

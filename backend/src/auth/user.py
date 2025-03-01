@@ -7,13 +7,7 @@ from sqlalchemy import UUID, ForeignKey, Integer, LargeBinary, String, Text, fun
 from sqlalchemy.dialects.postgresql import JSONB
 from webauthn.helpers.structs import AuthenticatorTransport
 
-# # based on https://github.com/duo-labs/duo-blog-going-passwordless-with-py-webauthn
-# @dataclass
-# class Credential:
-#     id: bytes
-#     public_key: bytes
-#     sign_count: int
-#     transports: List[AuthenticatorTransport] | None = None
+# based on https://github.com/duo-labs/duo-blog-going-passwordless-with-py-webauthn
 
 class PasskeyCredential(DBModel):
     """A passkey credential"""
@@ -37,6 +31,7 @@ class User(UserMixin, DBModel):
     id: Mapped[UUID] = mapped_column(UUID, primary_key=True, server_default=func.gen_random_uuid())
     username: Mapped[str] = mapped_column(String(63), unique=True, nullable=False)
     passkey_credentials: Mapped[List['PasskeyCredential']] = relationship(back_populates='user')
+    ticket: Mapped[str] = mapped_column(Text(), unique=True)
 
     def __repr__(self):
         return f'<User {self.username}>'
