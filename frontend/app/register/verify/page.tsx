@@ -37,6 +37,7 @@ export default function Page() {
       }
       const signedTicket = blinded.unblind(signedBlindedTicket);
       const payload = `${ticket}.${signedTicket}`
+      // we use the fragment to avoid leaking the ticket in the URL
       router.push(`/register/finish#${new URLSearchParams({ ticket: payload }).toString()}`);
     }
     verify();
