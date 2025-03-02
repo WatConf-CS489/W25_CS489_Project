@@ -1,11 +1,17 @@
 import logging
-
 from flask_alembic import Alembic
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from redis import Redis
 from src.base import app, DBModel
+# from dotenv import load_dotenv
 
+
+logging.getLogger().setLevel(logging.INFO)
+
+# load_dotenv("backend/envs/common.env")
+# app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "fallback-secret-key")
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 logging.getLogger().setLevel(logging.INFO)
 
 # TODO: use env vars for config secrets
