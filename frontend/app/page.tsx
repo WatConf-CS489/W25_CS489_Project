@@ -2,7 +2,7 @@
 
 import { API_URL } from "@/constants";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { startAuthentication } from "@simplewebauthn/browser";
 import {
