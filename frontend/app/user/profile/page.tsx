@@ -38,7 +38,7 @@ export default function Page() {
         throw new Error();
       }
       return response.json();
-    } catch (error) {
+    } catch {
       setError(true);
       return {"username": "temp_fallback"};
     }
@@ -93,12 +93,12 @@ export default function Page() {
             </Snackbar>
             <Divider variant="middle" className="p-2" />
             <Typography align="center" marginTop="30px">
-              <Link href="/user/contact" underline="hover">
+              <Link href="/user/contact">
                 Contact us
               </Link>
             </Typography>
             <Typography align="center" margin="20px" color="#ff0000">
-              <Link href="/user/delete-account" underline="hover">
+              <Link href="/user/delete-account">
                 Delete account
               </Link>
             </Typography>
