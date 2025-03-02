@@ -1,7 +1,3 @@
-ifneq ($(PROD),)
-export COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml
-endif
-
 .PHONY: up
 # start services
 up:
@@ -41,3 +37,13 @@ exec:
 # show logs
 logs:
 	docker compose logs -f
+
+ifeq ($(OS),Windows_NT)
+COMPOSE_SEPARATOR = ;
+else
+COMPOSE_SEPARATOR = :
+endif
+
+ifneq ($(PROD),)
+export COMPOSE_FILE = docker-compose.yml$(COMPOSE_SEPARATOR)docker-compose.prod.yml
+endif
