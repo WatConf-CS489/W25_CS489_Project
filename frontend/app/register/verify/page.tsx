@@ -2,6 +2,7 @@
 
 import { API_URL } from "@/constants";
 import { RSABSSA } from "@cloudflare/blindrsa-ts";
+import { Container, Stack, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -90,11 +91,28 @@ export default function Page() {
   }, [code, router]);
 
   return (
-    <>
-      <div className="flex flex-col gap-4 max-w-sm mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-semibold">Verify Email</h1>
-        {error ? <p>{error}</p> : <p>Verifying...</p>}
-      </div>
-    </>
+    <Container className="h-screen flex flex-col justify-center">
+      <Typography
+        align="center"
+        variant="h1"
+        sx={{
+          position: "absolute",
+          top: "10%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          userSelect: "none",
+        }}
+      >
+        WATConfessions
+      </Typography>
+      <Container maxWidth="xs" sx={{ marginTop: 10 }}>
+        <Stack
+          className="bg-white rounded-lg shadow-xl px-10 py-12"
+          spacing={1}
+        >
+          <Typography>{error ? error : "Verifying..."}</Typography>
+        </Stack>
+      </Container>
+    </Container>
   );
 }

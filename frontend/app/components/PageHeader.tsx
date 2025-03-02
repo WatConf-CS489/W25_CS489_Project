@@ -4,6 +4,8 @@ import { AppBar, Button, IconButton, Link, Toolbar, Typography } from "@mui/mate
 import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
 
+import { BoldText } from "./Utils";
+
 const StickyHeader = styled(AppBar)({
   position: "sticky",
   top: 0,
@@ -31,11 +33,6 @@ const RightChild = styled(Box)({
   paddingRight: "3vw",
 });
 
-const BoldText = styled(Box)({
-  fontWeight: "bold",
-  display: "inline",
-});
-
 const PostButton = styled(Button)({
   backgroundColor: "#eaab00",
   "&:hover": {
@@ -54,7 +51,7 @@ const ProfileButton = styled(IconButton)({
   aspectRatio: "1",
 });
 
-export default function PageHeader() {
+export default function PageHeader({ hasPostButton }: { hasPostButton: boolean }) {
   return (
     <>
       <StickyHeader>
@@ -67,13 +64,14 @@ export default function PageHeader() {
             </Typography>
           </LeftChild>
           <RightChild>
+            {hasPostButton &&
             <PostButton variant="contained" component="a" href="/post">
               <Box sx={{ paddingLeft: "1vw", paddingRight: "1vw" }}>
               <Typography variant="h6">
                 <BoldText sx={{ color: "#000000" }}>Post</BoldText>
               </Typography>
               </Box>
-            </PostButton>
+            </PostButton>}
             <Box sx={{ display: "flex", marginLeft: "3vw" }}>
               <ProfileButton component="a" href="/user/profile">
                 <PersonIcon sx={{ color: "#000000" }} />
