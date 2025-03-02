@@ -58,14 +58,14 @@ export default function PageHeader({ hasPostButton }: { hasPostButton: boolean }
         <StyledToolbar>
           <LeftChild>
             <Typography variant="h4">
-              <Link href="/dashboard" color="inherit" underline="none">
+              <Link href="/user/dashboard" color="inherit" underline="none">
                 WAT<BoldText>Confessions</BoldText>
               </Link>
             </Typography>
           </LeftChild>
           <RightChild>
             {hasPostButton &&
-            <PostButton variant="contained" component="a" href="/post">
+            <PostButton variant="contained" component="a" href="/user/post">
               <Box sx={{ paddingLeft: "1vw", paddingRight: "1vw" }}>
               <Typography variant="h6">
                 <BoldText sx={{ color: "#000000" }}>Post</BoldText>

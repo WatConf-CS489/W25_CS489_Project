@@ -31,12 +31,23 @@ export default function Page() {
     }
   }
 
-  const data = {"message": "username"};
+  const fetchUsername = async () => {
+    const response = await fetch(`${API_URL}/profile`);
+    try {
+      if (!response.ok) {
+        throw new Error();
+      }
+      return response.json();
+    } catch (error) {
+      setError(true);
+      return {"message": "temp_fallback"};
+    }
+  }
 
-  // const { data } = useQuery({
-  //   queryKey: ["user"],
-  //   queryFn: () => fetch(`${API_URL}/profile`).then((res) => res.json()),
-  // });
+  const { data } = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchUsername,
+  });
 
   return (
     <>
