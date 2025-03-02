@@ -18,4 +18,4 @@ def logout():
 @login_required
 def profile():
     user = get_current_user()
-    return jsonify({"message": f"Hello, {user.username}!"}), 200
+    return jsonify({"username": user.username}), 200
