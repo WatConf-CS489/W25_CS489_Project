@@ -7,7 +7,6 @@ from flask import request, jsonify
 
 class CreatePostRequest(BaseModel):
     content: str
-    author: str
 
 @app.route("/post", methods=["POST"])
 def create_post():
