@@ -68,7 +68,6 @@ const Post = ({ post } : { post: PostType }) => {
 };
 
 export default function Page() {
-  // const router = useRouter();
   const posts: PostType[] = [
     {
       timestamp: "1 February 2025",
@@ -93,13 +92,11 @@ export default function Page() {
   return (
     <>
       <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <PageHeader />
+        <PageHeader hasPostButton={true} />
         <ContentWrapper>
           <List sx={{ overflowY: "auto", paddingTop: "3vh" }}>
             {posts.map((post, index) => (
-              <React.Fragment key={index}>
-                <Post post={post} />
-              </React.Fragment>
+              <Post key={index} post={post} />
             ))}
           </List>
           <Typography variant="body1" marginBottom="40px">

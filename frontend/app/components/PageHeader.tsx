@@ -54,7 +54,7 @@ const ProfileButton = styled(IconButton)({
   aspectRatio: "1",
 });
 
-export default function PageHeader() {
+export default function PageHeader({ hasPostButton }: { hasPostButton: boolean }) {
   return (
     <>
       <StickyHeader>
@@ -67,13 +67,14 @@ export default function PageHeader() {
             </Typography>
           </LeftChild>
           <RightChild>
+            {hasPostButton &&
             <PostButton variant="contained" component="a" href="/post">
               <Box sx={{ paddingLeft: "1vw", paddingRight: "1vw" }}>
               <Typography variant="h6">
                 <BoldText sx={{ color: "#000000" }}>Post</BoldText>
               </Typography>
               </Box>
-            </PostButton>
+            </PostButton>}
             <Box sx={{ display: "flex", marginLeft: "3vw" }}>
               <ProfileButton component="a" href="/user/profile">
                 <PersonIcon sx={{ color: "#000000" }} />
