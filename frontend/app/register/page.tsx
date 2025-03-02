@@ -67,6 +67,7 @@ export default function Page() {
                   className="bg-slate-100"
                   label="Email"
                   variant="outlined"
+                  autoComplete="email"
                   placeholder="user@uwaterloo.ca"
                   onChange={(e) => setEmail(e.target.value)}
                 />

@@ -155,6 +155,7 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
               className="bg-slate-100"
               label="Username"
               variant="outlined"
+              autoComplete="off"
               onChange={(e) => setUsername(e.target.value)}
             />
             <FormControlLabel
