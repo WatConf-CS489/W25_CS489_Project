@@ -11,7 +11,14 @@ import { Alert, IconButton, List, ListItem, Snackbar, Typography } from "@mui/ma
 import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
 
-const Post = ({ post }) => {
+interface PostType {
+  content: string;
+  liked: boolean;
+  likes: number;
+  time: string;
+};
+
+const Post = ({ post }: { post: PostType }) => {
   const ProfileImage = styled(IconButton)({
     color: "#000000",
     backgroundColor: "#d9d9d9",
@@ -62,7 +69,7 @@ const Post = ({ post }) => {
 export default function Page() {
   const [error, setError] = useState(false);
 
-  const temp_fallback_posts = [
+  const temp_fallback_posts: PostType[] = [
     {
       time: "1 February 2025",
       liked: false,
@@ -90,13 +97,13 @@ export default function Page() {
         throw new Error();
       }
       return response.json();
-    } catch (error) {
+    } catch {
       setError(true);
       return { posts: temp_fallback_posts };
     }
   }
   
-  const { data } = useQuery({
+  const { data } = useQuery<{ posts: PostType[] }>({
     queryKey: ["user"],
     queryFn: fetchPosts,
   });
@@ -108,7 +115,7 @@ export default function Page() {
         <ContentWrapper>
           <List sx={{ overflowY: "auto", paddingTop: "3vh" }}>
             {data && data.posts ?
-              data.posts.map((post, index) => (
+              data.posts.map((post: PostType, index: number) => (
                 <Post key={index} post={post} />
               )) :
               <Typography variant="body1">

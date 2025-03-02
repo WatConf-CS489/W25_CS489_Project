@@ -32,7 +32,7 @@ export default function Page() {
           setError(true);
           setLoading(false);
         }
-      } catch (error) {
+      } catch {
         setError(true);
         setLoading(false);
       }
