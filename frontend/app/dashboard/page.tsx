@@ -3,6 +3,7 @@
 import { API_URL } from "@/constants";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
+import * as yup from "yup";
 
 import ContentWrapper from "../components/ContentWrapper";
 import PageHeader from "../components/PageHeader";
@@ -83,13 +84,26 @@ export default function Page() {
     }
   ];
 
+  const responseSchema = yup.object({
+    posts: yup
+      .array(
+        yup.object({
+          time: yup.string().required(),
+          liked: yup.boolean().required(),
+          likes: yup.number().required(),
+          content: yup.string().required(),
+        })
+      )
+      .required(),
+  });
+
   const fetchPosts = async () => {
     try {
       const response = await fetch(`${API_URL}/readAll`);
       if (!response.ok) {
         throw new Error();
       }
-      return response.json();
+      return await responseSchema.validate(await response.json());
     } catch (error) {
       setError(true);
       return { posts: temp_fallback_posts };
