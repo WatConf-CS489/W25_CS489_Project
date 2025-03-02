@@ -53,7 +53,10 @@ export default function Page() {
           setError(true);
           setLoading(false);
         }
-      } catch {
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+          return;
+        }
         setError(true);
         setLoading(false);
       }
