@@ -6,23 +6,10 @@ import React from "react";
 
 import ContentWrapper from "../components/ContentWrapper";
 import PageHeader from "../components/PageHeader";
+import { BoldText, MainContent } from "../components/Utils"
 
 import { Alert, Button, Snackbar, TextField, Typography } from "@mui/material";
-import { Box, Stack, styled } from "@mui/system";
-
-const PostForm = styled(Box)({
-  display: "flex",
-  flexDirection: "column",
-  width: "40%",
-  backgroundColor: "#ffffff",
-  opacity: 0.9,
-  borderRadius: "10px",
-});
-
-const BoldText = styled(Box)({
-  fontWeight: "bold",
-  display: "inline",
-});
+import { Box, Stack } from "@mui/system";
 
 export default function Page() {
   const [content, setContent] = useState("");
@@ -33,12 +20,10 @@ export default function Page() {
   const submit = useCallback(
     async (content: string | null) => {
       try {
-        console.log("submitting post");
         const response = await fetch(`${API_URL}/post`, {
           method: "POST",
           body: JSON.stringify({ content }),
         });
-        console.log("response back, response.ok is" + response.ok)
         if (response.ok) {
           setSuccess(true);
           setLoading(false);
@@ -69,7 +54,7 @@ export default function Page() {
           <Typography variant="h3" marginTop="45px" marginBottom="40px">
             <BoldText>Post</BoldText>
           </Typography>
-          <PostForm>
+          <MainContent>
             <Typography variant="h6" align="center" marginTop="30px">
               <BoldText>Make a post</BoldText>
             </Typography>
@@ -129,7 +114,7 @@ export default function Page() {
                 </Snackbar>
               </Stack>
             </form>
-          </PostForm>
+          </MainContent>
         </ContentWrapper>
       </Box>
     </>

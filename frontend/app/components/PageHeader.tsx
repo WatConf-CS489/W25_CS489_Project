@@ -4,6 +4,8 @@ import { AppBar, Button, IconButton, Link, Toolbar, Typography } from "@mui/mate
 import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
 
+import { BoldText } from "./Utils";
+
 const StickyHeader = styled(AppBar)({
   position: "sticky",
   top: 0,
@@ -29,11 +31,6 @@ const LeftChild = styled(Box)({
 const RightChild = styled(Box)({
   display: "flex",
   paddingRight: "3vw",
-});
-
-const BoldText = styled(Box)({
-  fontWeight: "bold",
-  display: "inline",
 });
 
 const PostButton = styled(Button)({
