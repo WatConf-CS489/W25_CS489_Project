@@ -5,8 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import * as yup from "yup";
 
-import ContentWrapper from "../components/ContentWrapper";
-import PageHeader from "../components/PageHeader";
+import ContentWrapper from "@/components/ContentWrapper";
+import PageHeader from "@/components/PageHeader";
 
 import { Alert, IconButton, List, ListItem, Snackbar, Typography } from "@mui/material";
 import { Box, styled } from "@mui/system";

@@ -3,20 +3,29 @@
 import { API_URL } from "@/constants";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
+import * as yup from "yup";
 
-import ContentWrapper from "../../components/ContentWrapper";
-import PageHeader from "../../components/PageHeader";
+import ContentWrapper from "@/components/ContentWrapper";
+import PageHeader from "@/components/PageHeader";
 
 import { Alert, IconButton, List, ListItem, Snackbar, Typography } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
 
-interface PostType {
-  content: string;
-  liked: boolean;
-  likes: number;
-  time: string;
-};
+const postSchema = yup.object({
+  time: yup.string().required(),
+  liked: yup.boolean().required(),
+  likes: yup.number().required(),
+  content: yup.string().required(),
+})
+
+const responseSchema = yup.object({
+  posts: yup
+    .array(postSchema)
+    .required(),
+});
+
+type PostType = yup.InferType<typeof postSchema>;
 
 const Post = ({ post }: { post: PostType }) => {
   const ProfileImage = styled(IconButton)({
@@ -96,14 +105,14 @@ export default function Page() {
       if (!response.ok) {
         throw new Error();
       }
-      return response.json();
+      return await responseSchema.validate(await response.json());
     } catch {
       setError(true);
       return { posts: temp_fallback_posts };
     }
   }
   
-  const { data } = useQuery<{ posts: PostType[] }>({
+  const { data } = useQuery({
     queryKey: ["user"],
     queryFn: fetchPosts,
   });
@@ -115,7 +124,7 @@ export default function Page() {
         <ContentWrapper>
           <List sx={{ overflowY: "auto", paddingTop: "3vh" }}>
             {data && data.posts ?
-              data.posts.map((post: PostType, index: number) => (
+              data.posts.map((post, index) => (
                 <Post key={index} post={post} />
               )) :
               <Typography variant="body1">
