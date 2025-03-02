@@ -7,7 +7,6 @@ import {
   Container,
   Divider,
   FormHelperText,
-  formHelperTextClasses,
   Link,
   Snackbar,
   Stack,
@@ -18,7 +17,6 @@ import { useState } from "react";
 
 export default function Page() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("");
 
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -82,7 +80,6 @@ export default function Page() {
                 >
                   Send Email
                 </Button>
-                <Typography>{status}</Typography>
                 <Snackbar
                   open={error}
                   anchorOrigin={{ vertical: "bottom", horizontal: "right" }}

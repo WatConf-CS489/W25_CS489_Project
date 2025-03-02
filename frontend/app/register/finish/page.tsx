@@ -10,7 +10,9 @@ import {
   Button,
   Checkbox,
   Container,
+  Divider,
   FormControlLabel,
+  Link,
   Stack,
   TextField,
   Typography,
@@ -51,6 +53,12 @@ export default function Page() {
           spacing={1}
         >
           <Typography>Error: Missing Ticket</Typography>
+          <Divider variant="middle" className="p-2" />
+          <Typography align="center">
+            <Link href="/" underline="hover">
+              Return to login
+            </Link>
+          </Typography>
         </Stack>
       </Container>
     </Container>
@@ -63,9 +71,12 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [remember, setRemember] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setLoading(true);
     const startResponse = await fetch(`${API_URL}/auth/register/start`, {
       method: "POST",
       body: JSON.stringify({ username }),
@@ -88,6 +99,7 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
     if (response.verified) {
       router.push("/");
     } else {
+      setLoading(false);
       console.error("Registration failed", { response });
     }
   };
@@ -138,6 +150,7 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
             />
             <Button
               type="submit"
+              loading={loading}
               variant="contained"
               sx={{ backgroundColor: "#3A3A3A" }}
             >
