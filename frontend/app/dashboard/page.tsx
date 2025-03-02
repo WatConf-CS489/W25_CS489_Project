@@ -12,12 +12,20 @@ import { Alert, IconButton, List, ListItem, Snackbar, Typography } from "@mui/ma
 import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
 
-interface PostType {
-  content: string;
-  liked: boolean;
-  likes: number;
-  time: string;
-};
+const postSchema = yup.object({
+  time: yup.string().required(),
+  liked: yup.boolean().required(),
+  likes: yup.number().required(),
+  content: yup.string().required(),
+})
+
+const responseSchema = yup.object({
+  posts: yup
+    .array(postSchema)
+    .required(),
+});
+
+type PostType = yup.InferType<typeof postSchema>;
 
 const Post = ({ post }: { post: PostType }) => {
   const ProfileImage = styled(IconButton)({
@@ -91,19 +99,6 @@ export default function Page() {
     }
   ];
 
-  const responseSchema = yup.object({
-    posts: yup
-      .array(
-        yup.object({
-          time: yup.string().required(),
-          liked: yup.boolean().required(),
-          likes: yup.number().required(),
-          content: yup.string().required(),
-        })
-      )
-      .required(),
-  });
-
   const fetchPosts = async () => {
     try {
       const response = await fetch(`${API_URL}/readAll`);
@@ -117,8 +112,7 @@ export default function Page() {
     }
   }
   
-  
-  const { data } = useQuery<{ posts: PostType[] }>({
+  const { data } = useQuery({
     queryKey: ["user"],
     queryFn: fetchPosts,
   });
@@ -130,7 +124,7 @@ export default function Page() {
         <ContentWrapper>
           <List sx={{ overflowY: "auto", paddingTop: "3vh" }}>
             {data && data.posts ?
-              data.posts.map((post: PostType, index: number) => (
+              data.posts.map((post, index) => (
                 <Post key={index} post={post} />
               )) :
               <Typography variant="body1">
