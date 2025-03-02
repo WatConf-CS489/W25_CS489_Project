@@ -15,7 +15,7 @@ def create_post():
     if not body:
         return jsonify({'error': 'Invalid or missing JSON data'}), 400
 
-    content = body.get('content')
+    content = body.content
 
     if not content:
         return jsonify({'error': 'Missing required fields: content'}), 400
