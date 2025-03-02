@@ -6,6 +6,15 @@ import { useState } from "react";
 
 import { startRegistration } from "@simplewebauthn/browser";
 import useHash from "@/utils/useHash";
+import {
+  Button,
+  Checkbox,
+  Container,
+  FormControlLabel,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 function parseHash(hash: string) {
   if (!hash.startsWith("#")) {
@@ -19,11 +28,33 @@ export default function Page() {
   const params = useHash();
   const ticketPayload = params && parseHash(params);
 
-  return ticketPayload ? <TicketView ticketPayload={ticketPayload} /> : <>
-    <div className="flex flex-col gap-4 max-w-sm mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      Error: Missing ticket
-    </div>
-  </>;
+  return ticketPayload ? (
+    <TicketView ticketPayload={ticketPayload} />
+  ) : (
+    <Container className="h-screen flex flex-col justify-center">
+      <Typography
+        align="center"
+        variant="h1"
+        sx={{
+          position: "absolute",
+          top: "10%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          userSelect: "none",
+        }}
+      >
+        WATConfessions
+      </Typography>
+      <Container maxWidth="xs" sx={{ marginTop: 10 }}>
+        <Stack
+          className="bg-white rounded-lg shadow-xl px-10 py-12"
+          spacing={1}
+        >
+          <Typography>Error: Missing Ticket</Typography>
+        </Stack>
+      </Container>
+    </Container>
+  );
 }
 
 function TicketView({ ticketPayload }: { ticketPayload: string }) {
@@ -62,45 +93,59 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
   };
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 max-w-sm mx-auto mt-8 p-6 bg-white rounded-lg shadow-md"
+    <Container className="h-screen flex flex-col justify-center">
+      <Typography
+        align="center"
+        variant="h1"
+        sx={{
+          position: "absolute",
+          top: "10%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          userSelect: "none",
+        }}
       >
-        <h1 className="text-2xl font-semibold">Finish Registration</h1>
-        <div>
-          <p className="text-gray-500">
-            We cannot tie your email to your username. For added anonymity, we recommend
-            saving this link and coming back after midnight to finish registration.
-          </p>
-        </div>
-        <input
-          type="text"
-          name="username"
-          autoComplete="off"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Username"
-        />
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="remember"
-            name="remember"
-            className="h-4 w-4"
-            checked={remember}
-            onChange={(e) => setRemember(e.target.checked)}
-          />{" "}
-          <label htmlFor="remember">Remember me</label>
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
-        >
-          Register
-        </button>
-      </form>
-    </>
+        WATConfessions
+      </Typography>
+      <Container maxWidth="xs" sx={{ marginTop: 10 }}>
+        <form onSubmit={(e) => handleSubmit(e)}>
+          <Stack
+            className="bg-white rounded-lg shadow-xl px-10 py-12"
+            spacing={1}
+          >
+            <Typography variant="h4" sx={{ marginTop: 5, marginBottom: 5 }}>
+              Finish Registration
+            </Typography>
+            <Typography sx={{ marginTop: 10, marginBottom: 10 }}>
+              We cannot tie your email to your username. For added anonymity, we
+              recommend saving this link and coming back after midnight to
+              finish registration.
+            </Typography>
+            <TextField
+              className="bg-slate-100"
+              label="Username"
+              variant="outlined"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                />
+              }
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ backgroundColor: "#3A3A3A" }}
+            >
+              Register
+            </Button>
+          </Stack>
+        </form>
+      </Container>
+    </Container>
   );
 }
