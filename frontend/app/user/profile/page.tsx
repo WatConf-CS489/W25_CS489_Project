@@ -40,7 +40,7 @@ export default function Page() {
       return response.json();
     } catch (error) {
       setError(true);
-      return {"message": "temp_fallback"};
+      return {"username": "temp_fallback"};
     }
   }
 
@@ -65,7 +65,7 @@ export default function Page() {
               <Typography variant="body1">
                 Username (invisible to others):&nbsp;
               </Typography>
-              <BoldText>{data?.message ?? ""}</BoldText>
+              <BoldText>{data?.username ?? ""}</BoldText>
             </Box>
             <Button
               type="submit"
