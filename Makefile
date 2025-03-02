@@ -41,3 +41,6 @@ exec:
 # show logs
 logs:
 	docker compose logs -f
+.PHONY: seed
+seed:
+	docker exec -it db psql -U postgres -d postgres -f /seed.sql
