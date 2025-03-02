@@ -7,7 +7,7 @@ from sqlalchemy import UUID, ForeignKey, Integer, Text, DateTime, func
 class Post(DBModel):
     __tablename__ = 'posts'
 
-    id: Mapped[UUID] = mapped_column(UUID, primary_key=True, server_default=func.gen_random_uuid())
+    id: Mapped[UUID] = mapped_column(Integer, primary_key=True, autoincrement=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     user_id: Mapped[UUID] = mapped_column(UUID, ForeignKey("user.id"), nullable=False)
