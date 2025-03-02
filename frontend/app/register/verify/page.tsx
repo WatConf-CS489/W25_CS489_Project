@@ -1,7 +1,6 @@
 "use client";
 
 import { API_URL } from "@/constants";
-import { RSABSSA } from "@cloudflare/blindrsa-ts";
 import { Container, Stack, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -36,6 +35,9 @@ const publicKeyPromise = (async () => {
 })();
 
 async function blind(ticket: string) {
+  // for some reason having this as a static import causes a Webpack error during HMR:
+  // > TypeError: undefined is not an object (evaluating 'chunkIds.length')
+  const { RSABSSA } = await import("@cloudflare/blindrsa-ts");
   const suite = RSABSSA.SHA384.PSS.Deterministic();
   const prepared = suite.prepare(new TextEncoder().encode(ticket));
   const publicKey = await publicKeyPromise;
