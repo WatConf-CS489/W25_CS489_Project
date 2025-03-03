@@ -1,12 +1,14 @@
 from typing import List
 from flask_login import UserMixin, current_user
+# from datetime import datetime
 from src.base import DBModel
 from src.extensions import db, login_manager
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import UUID, ForeignKey, Integer, LargeBinary, String, Text, func
+from sqlalchemy import UUID, ForeignKey, Integer, LargeBinary, String, Text, func, Boolean, DateTime
 from sqlalchemy.dialects.postgresql import JSONB
+from argon2 import PasswordHasher
 from webauthn.helpers.structs import AuthenticatorTransport
-
+ph = PasswordHasher()
 # based on https://github.com/duo-labs/duo-blog-going-passwordless-with-py-webauthn
 
 class PasskeyCredential(DBModel):
