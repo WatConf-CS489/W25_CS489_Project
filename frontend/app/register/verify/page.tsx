@@ -1,7 +1,7 @@
 "use client";
 
 import { API_URL } from "@/constants";
-import { Container, Stack, Typography } from "@mui/material";
+import { Container, Divider, Link, Stack, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
@@ -122,5 +122,21 @@ function Verifier() {
     verify();
   }, [code, router]);
 
-  return <Typography>{error ? error : "Verifying..."}</Typography>
+  return (
+    <>
+      {error ? (
+        <>
+          <Typography>{error}</Typography>{" "}
+          <Divider variant="middle" className="p-2" />
+          <Typography align="center">
+            <Link href="/" underline="hover">
+              Return to login
+            </Link>
+          </Typography>
+        </>
+      ) : (
+        <Typography>Verifying...</Typography>
+      )}
+    </>
+  );
 }
