@@ -43,4 +43,5 @@ logs:
 	docker compose logs -f
 .PHONY: seed
 seed:
+	docker cp backend/src/seed.sql db:/seed.sql
 	docker exec -it db psql -U postgres -d postgres -f /seed.sql
