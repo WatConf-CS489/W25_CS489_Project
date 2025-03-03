@@ -47,3 +47,9 @@ endif
 ifneq ($(PROD),)
 export COMPOSE_FILE = docker-compose.yml$(COMPOSE_SEPARATOR)docker-compose.prod.yml
 endif
+
+.PHONY: seed
+seed:
+	@set -o allexport && source backend/envs/dev.env && set +o allexport; \
+	docker cp backend/src/seed.sql db:/seed.sql; \
+	docker exec -it db psql -U $$POSTGRES_USER -d $$POSTGRES_DB -f /seed.sql
