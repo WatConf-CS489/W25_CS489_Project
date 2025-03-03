@@ -2,7 +2,7 @@
 
 import { API_URL } from "@/constants";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { startRegistration } from "@simplewebauthn/browser";
 import useHash from "@/utils/useHash";
@@ -10,7 +10,9 @@ import {
   Button,
   Checkbox,
   Container,
+  Divider,
   FormControlLabel,
+  Link,
   Stack,
   TextField,
   Typography,
@@ -27,6 +29,11 @@ function parseHash(hash: string) {
 export default function Page() {
   const params = useHash();
   const ticketPayload = params && parseHash(params);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return ticketPayload ? (
     <TicketView ticketPayload={ticketPayload} />
@@ -50,7 +57,26 @@ export default function Page() {
           className="bg-white rounded-lg shadow-xl px-10 py-12"
           spacing={1}
         >
-          <Typography>Error: Missing Ticket</Typography>
+          {
+            // If this is the SSR pass, we'll hit this branch because the server
+            // doesn't have access to the hash. It's only an error condition if
+            // we're on the *client* and don't have a hash.
+            isClient ? (
+              <>
+                <Typography>Error: Missing Ticket</Typography>
+                <Divider variant="middle" className="p-2" />
+                <Typography align="center">
+                  <Link href="/" underline="hover">
+                    Return to login
+                  </Link>
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography>Loading...</Typography>
+              </>
+            )
+          }
         </Stack>
       </Container>
     </Container>
@@ -63,9 +89,12 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [remember, setRemember] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setLoading(true);
     const startResponse = await fetch(`${API_URL}/auth/register/start`, {
       method: "POST",
       body: JSON.stringify({ username }),
@@ -88,6 +117,7 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
     if (response.verified) {
       router.push("/");
     } else {
+      setLoading(false);
       console.error("Registration failed", { response });
     }
   };
@@ -125,6 +155,7 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
               className="bg-slate-100"
               label="Username"
               variant="outlined"
+              autoComplete="off"
               onChange={(e) => setUsername(e.target.value)}
             />
             <FormControlLabel
@@ -138,6 +169,7 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
             />
             <Button
               type="submit"
+              loading={loading}
               variant="contained"
               sx={{ backgroundColor: "#3A3A3A" }}
             >

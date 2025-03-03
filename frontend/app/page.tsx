@@ -2,7 +2,7 @@
 
 import { API_URL } from "@/constants";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { startAuthentication } from "@simplewebauthn/browser";
 import {
@@ -54,11 +54,22 @@ export default function Page() {
           setLoading(false);
         }
       } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+          return;
+        }
         setError(true);
         setLoading(false);
       }
     },
     [router, remember]
+  );
+
+  useEffect(
+    () => {
+      submit(null);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -91,6 +102,7 @@ export default function Page() {
             <TextField
               className="bg-slate-100"
               label="Username"
+              autoComplete="username webauthn"
               variant="outlined"
               onChange={(e) => setUsername(e.target.value)}
             />

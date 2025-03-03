@@ -1,10 +1,9 @@
 "use client";
 
 import { API_URL } from "@/constants";
-import { RSABSSA } from "@cloudflare/blindrsa-ts";
 import { Container, Stack, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 function toHexString(byteArray: Uint8Array) {
   return Array.from(byteArray)
@@ -36,6 +35,9 @@ const publicKeyPromise = (async () => {
 })();
 
 async function blind(ticket: string) {
+  // for some reason having this as a static import causes a Webpack error during HMR:
+  // > TypeError: undefined is not an object (evaluating 'chunkIds.length')
+  const { RSABSSA } = await import("@cloudflare/blindrsa-ts");
   const suite = RSABSSA.SHA384.PSS.Deterministic();
   const prepared = suite.prepare(new TextEncoder().encode(ticket));
   const publicKey = await publicKeyPromise;
@@ -55,6 +57,36 @@ async function blind(ticket: string) {
 }
 
 export default function Page() {
+  return (
+    <Container className="h-screen flex flex-col justify-center">
+      <Typography
+        align="center"
+        variant="h1"
+        sx={{
+          position: "absolute",
+          top: "10%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          userSelect: "none",
+        }}
+      >
+        WATConfessions
+      </Typography>
+      <Container maxWidth="xs" sx={{ marginTop: 10 }}>
+        <Stack
+          className="bg-white rounded-lg shadow-xl px-10 py-12"
+          spacing={1}
+        >
+          <Suspense fallback={<Typography>Loading...</Typography>}>
+            <Verifier />
+          </Suspense>
+        </Stack>
+      </Container>
+    </Container>
+  );
+}
+
+function Verifier() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
@@ -90,29 +122,5 @@ export default function Page() {
     verify();
   }, [code, router]);
 
-  return (
-    <Container className="h-screen flex flex-col justify-center">
-      <Typography
-        align="center"
-        variant="h1"
-        sx={{
-          position: "absolute",
-          top: "10%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          userSelect: "none",
-        }}
-      >
-        WATConfessions
-      </Typography>
-      <Container maxWidth="xs" sx={{ marginTop: 10 }}>
-        <Stack
-          className="bg-white rounded-lg shadow-xl px-10 py-12"
-          spacing={1}
-        >
-          <Typography>{error ? error : "Verifying..."}</Typography>
-        </Stack>
-      </Container>
-    </Container>
-  );
+  return <Typography>{error ? error : "Verifying..."}</Typography>
 }
