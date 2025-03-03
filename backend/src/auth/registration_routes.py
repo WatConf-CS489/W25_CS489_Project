@@ -95,7 +95,7 @@ def handler_register():
     except Exception as err:
         return {"verified": False, "msg": str(err), "status": 400}
 
-    user = User(username=username, ticket=body.ticket)
+    user = User(username=username, ticket=body.ticket, password_hash="not_null_i_promise_1017")
     db.session.add(user)
     db.session.flush()
 
