@@ -1,3 +1,3 @@
 import src.auth.user
-import src.auth.post
+import src.posts.post
 import src.auth.vote

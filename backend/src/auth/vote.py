@@ -14,7 +14,7 @@ class Vote(DBModel):
     post: Mapped['Post'] = relationship("Post", back_populates="votes")
 
 from .user import User
-from .post import Post
+from src.posts.post import Post
 
 User.votes = relationship("Vote", back_populates="user")
 Post.votes = relationship("Vote", back_populates="post")
