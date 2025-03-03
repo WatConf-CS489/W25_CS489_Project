@@ -65,13 +65,15 @@ export default function PageHeader({ hasPostButton }: { hasPostButton: boolean }
           </LeftChild>
           <RightChild>
             {hasPostButton &&
-            <PostButton variant="contained" as="a" href="/user/post">
-              <Box sx={{ paddingLeft: "1vw", paddingRight: "1vw" }}>
-              <Typography variant="h6">
-                <BoldText sx={{ color: "#000000" }}>Post</BoldText>
-              </Typography>
-              </Box>
-            </PostButton>}
+            <a href="/user/post">
+              <PostButton variant="contained">
+                <Box sx={{ paddingLeft: "1vw", paddingRight: "1vw" }}>
+                <Typography variant="h6">
+                  <BoldText sx={{ color: "#000000" }}>Post</BoldText>
+                </Typography>
+                </Box>
+              </PostButton>
+            </a>}
             <Box sx={{ display: "flex", marginLeft: "3vw" }}>
               <a href="/user/profile">
                 <ProfileButton>
