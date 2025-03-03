@@ -77,7 +77,11 @@ const Post = ({ post }: { post: PostType }) => {
         </Typography>
       </PostMetadata>
       <PostContent>
-        <Typography variant="body1" margin="20px">
+        <Typography
+          variant="body1"
+          margin="20px"
+          sx={{ wordBreak: "break-word" }}
+        >
           {post.content}
         </Typography>
       </PostContent>
