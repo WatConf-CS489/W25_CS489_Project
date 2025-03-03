@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import ContentWrapper from "../../components/ContentWrapper";
 import PageHeader from "../../components/PageHeader";
-import { BoldText, MainContent } from "../../components/Utils"
+import { BoldText, MainContent } from "../../components/Utils";
 
 import { Alert, Button, Divider, Snackbar, Typography } from "@mui/material";
 import { Box } from "@mui/system";
@@ -16,10 +16,11 @@ import Link from "next/link";
 export default function Page() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  
+
   const router = useRouter();
 
   async function logout() {
+    setLoading(true);
     const response = await fetch(`${API_URL}/auth/logout`, {
       method: "POST",
     });
@@ -40,9 +41,9 @@ export default function Page() {
       return response.json();
     } catch {
       setError(true);
-      return {"username": "temp_fallback"};
+      return { username: "temp_fallback" };
     }
-  }
+  };
 
   const { data } = useQuery({
     queryKey: ["user"],
@@ -51,17 +52,38 @@ export default function Page() {
 
   return (
     <>
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
         <PageHeader hasPostButton={true} />
         <ContentWrapper>
           <Typography variant="h3" marginTop="45px" marginBottom="40px">
             <BoldText>User homepage</BoldText>
           </Typography>
           <MainContent minWidth="40vw">
-            <Typography variant="h6" align="center" marginTop="30px" marginLeft="30px" marginRight="30px">
-              <BoldText>You&#39;re logged in as an anonymous member of WatConfessions.</BoldText>
+            <Typography
+              variant="h6"
+              align="center"
+              marginTop="30px"
+              marginLeft="30px"
+              marginRight="30px"
+            >
+              <BoldText>
+                You&#39;re logged in as an anonymous member of WatConfessions.
+              </BoldText>
             </Typography>
-            <Box display="flex" flexDirection="row" marginTop="30px" marginBottom="30px" justifyContent="center">
+            <Box
+              display="flex"
+              flexDirection="row"
+              marginTop="30px"
+              marginBottom="30px"
+              justifyContent="center"
+            >
               <Typography variant="body1">
                 Username (invisible to others):&nbsp;
               </Typography>
@@ -70,9 +92,14 @@ export default function Page() {
             <Button
               type="submit"
               loading={loading}
-              variant="text"
+              variant="contained"
               onClick={logout}
-              sx={{ backgroundColor: "#3A3A3A", color: "#FFFFFF", width: "50%", alignSelf: "center" }}
+              sx={{
+                backgroundColor: "#3A3A3A",
+                color: "#FFFFFF",
+                width: "50%",
+                alignSelf: "center",
+              }}
             >
               Log out
             </Button>
@@ -93,14 +120,10 @@ export default function Page() {
             </Snackbar>
             <Divider variant="middle" className="p-2" />
             <Typography align="center" marginTop="30px">
-              <Link href="/user/contact">
-                Contact us
-              </Link>
+              <Link href="/contact">Contact us</Link>
             </Typography>
             <Typography align="center" margin="20px" color="#ff0000">
-              <Link href="/user/delete-account">
-                Delete account
-              </Link>
+              <Link href="/delete-account">Delete account</Link>
             </Typography>
           </MainContent>
         </ContentWrapper>

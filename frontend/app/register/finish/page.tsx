@@ -7,16 +7,19 @@ import { useEffect, useState } from "react";
 import { startRegistration } from "@simplewebauthn/browser";
 import useHash from "@/utils/useHash";
 import {
+  Alert,
   Button,
   Checkbox,
   Container,
   Divider,
   FormControlLabel,
   Link,
+  Snackbar,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
+import sanitize from "@/utils/sanitize";
 
 function parseHash(hash: string) {
   if (!hash.startsWith("#")) {
@@ -73,7 +76,7 @@ export default function Page() {
               </>
             ) : (
               <>
-                <Typography>Loading...</Typography>
+                <Typography align="center">Loading...</Typography>
               </>
             )
           }
@@ -90,35 +93,44 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
   const [username, setUsername] = useState("");
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setLoading(true);
-    const startResponse = await fetch(`${API_URL}/auth/register/start`, {
-      method: "POST",
-      body: JSON.stringify({ username }),
-    });
-    const { challenge_id: challengeID, options } = await startResponse.json();
-    const credential = await startRegistration({
-      optionsJSON: JSON.parse(options),
-    });
-    const finishResponse = await fetch(`${API_URL}/auth/register/finish`, {
-      method: "POST",
-      body: JSON.stringify({
-        credential: JSON.stringify(credential),
-        challenge_id: challengeID,
-        ticket: ticket,
-        ticket_signature: signature,
-        remember,
-      }),
-    });
-    const response = await finishResponse.json();
-    if (response.verified) {
-      router.push("/");
-    } else {
+
+    try {
+      const santizedUsername = sanitize(username);
+      const startResponse = await fetch(`${API_URL}/auth/register/start`, {
+        method: "POST",
+        body: JSON.stringify({ username: santizedUsername }),
+      });
+      const { challenge_id: challengeID, options } = await startResponse.json();
+      const credential = await startRegistration({
+        optionsJSON: JSON.parse(options),
+      });
+      const finishResponse = await fetch(`${API_URL}/auth/register/finish`, {
+        method: "POST",
+        body: JSON.stringify({
+          credential: JSON.stringify(credential),
+          challenge_id: challengeID,
+          ticket: ticket,
+          ticket_signature: signature,
+          remember,
+        }),
+      });
+      const response = await finishResponse.json();
+      if (response.verified) {
+        router.push("/");
+      } else {
+        setLoading(false);
+        setError(true);
+        console.error("Registration failed", { response });
+      }
+    } catch {
       setLoading(false);
-      console.error("Registration failed", { response });
+      setError(true);
     }
   };
 
@@ -175,6 +187,21 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
             >
               Register
             </Button>
+            <Snackbar
+              open={error}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              autoHideDuration={5000}
+              onClose={() => setError(false)}
+            >
+              <Alert
+                severity="error"
+                variant="filled"
+                sx={{ width: "100%" }}
+                onClose={() => setError(false)}
+              >
+                <Typography>Registration has failed.</Typography>
+              </Alert>
+            </Snackbar>
           </Stack>
         </form>
       </Container>
