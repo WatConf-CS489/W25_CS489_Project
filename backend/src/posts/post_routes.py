@@ -23,7 +23,7 @@ def create_post():
     try:
         new_post = Post(
             content=content,
-            author=get_current_user().id
+            user_id=get_current_user().id
         )
 
         db.session.add(new_post)
@@ -33,9 +33,8 @@ def create_post():
             'message': 'Post created successfully',
             'post': {
                 'id': str(new_post.id),
-                'author': new_post.author,
-                'date': new_post.date,
-                'content': new_post.content
+                'created_at': new_post.created_at,
+                'user_id': new_post.user_id
             }
         }), 201
     except Exception as err:

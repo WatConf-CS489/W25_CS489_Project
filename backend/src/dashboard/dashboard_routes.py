@@ -12,11 +12,11 @@ class PostObject(BaseModel):
 @app.route("/readAll", methods=["GET"])
 def read_all_posts():
     try:
-        all_posts = db.session.query(Post).order_by(desc(Post.date)).all()
+        all_posts = db.session.query(Post).order_by(desc(Post.created_at)).all()
 
         posts_array = [
             PostObject(
-                time=int(post.date.timestamp()),
+                time=int(post.created_at.timestamp()),
                 content=post.content
             ).model_dump()
             for post in all_posts
