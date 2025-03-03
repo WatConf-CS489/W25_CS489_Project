@@ -1,7 +1,3 @@
-ifneq ($(PROD),)
-export COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml
-endif
-
 .PHONY: up
 # start services
 up:
@@ -41,7 +37,19 @@ exec:
 # show logs
 logs:
 	docker compose logs -f
+
+ifeq ($(OS),Windows_NT)
+COMPOSE_SEPARATOR = ;
+else
+COMPOSE_SEPARATOR = :
+endif
+
+ifneq ($(PROD),)
+export COMPOSE_FILE = docker-compose.yml$(COMPOSE_SEPARATOR)docker-compose.prod.yml
+endif
 .PHONY: seed
+#seeded database
 seed:
-	docker cp backend/src/seed.sql db:/seed.sql
-	docker exec -it db psql -U postgres -d postgres -f /seed.sql
+	@set -o allexport && source backend/envs/dev.env && set +o allexport; \
+	docker cp backend/src/seed.sql db:/seed.sql; \
+	docker exec -it db psql -U $$POSTGRES_USER -d $$POSTGRES_DB -f /seed.sql
