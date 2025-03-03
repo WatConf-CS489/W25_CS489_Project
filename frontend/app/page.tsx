@@ -3,6 +3,7 @@
 import { API_URL } from "@/constants";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import sanitize from "@/utils/sanitize";
 
 import { startAuthentication } from "@simplewebauthn/browser";
 import {
@@ -28,10 +29,11 @@ export default function Page() {
 
   const submit = useCallback(
     async (username: string | null) => {
+      const santizedUsername = sanitize(username);
       try {
         const response = await fetch(`${API_URL}/auth/login/start`, {
           method: "POST",
-          body: JSON.stringify({ username }),
+          body: JSON.stringify({ username: santizedUsername }),
         });
         const { challenge_id, options } = await response.json();
         const credential = await startAuthentication({

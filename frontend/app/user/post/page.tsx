@@ -7,6 +7,7 @@ import React from "react";
 import ContentWrapper from "../../components/ContentWrapper";
 import PageHeader from "../../components/PageHeader";
 import { BoldText, MainContent } from "../../components/Utils";
+import sanitize from "@/utils/sanitize";
 
 import { Alert, Button, Snackbar, TextField, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
@@ -19,9 +20,10 @@ export default function Page() {
 
   const submit = useCallback(async (content: string | null) => {
     try {
+      const sanitizedContent = sanitize(content);
       const response = await fetch(`${API_URL}/post`, {
         method: "POST",
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content: sanitizedContent }),
       });
       if (response.ok) {
         setSuccess(true);

@@ -19,6 +19,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import sanitize from "@/utils/sanitize";
 
 function parseHash(hash: string) {
   if (!hash.startsWith("#")) {
@@ -100,9 +101,10 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
     setLoading(true);
 
     try {
+      const santizedUsername = sanitize(username);
       const startResponse = await fetch(`${API_URL}/auth/register/start`, {
         method: "POST",
-        body: JSON.stringify({ username }),
+        body: JSON.stringify({ username: santizedUsername }),
       });
       const { challenge_id: challengeID, options } = await startResponse.json();
       const credential = await startRegistration({
