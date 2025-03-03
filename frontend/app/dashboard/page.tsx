@@ -4,6 +4,7 @@ import { API_URL } from "@/constants";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import * as yup from "yup";
+import moment from "moment";
 
 import ContentWrapper from "@/components/ContentWrapper";
 import PageHeader from "@/components/PageHeader";
@@ -13,7 +14,7 @@ import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
 
 const postSchema = yup.object({
-  time: yup.string().required(),
+  time: yup.number().required(),
   liked: yup.boolean().required(),
   likes: yup.number().required(),
   content: yup.string().required(),
@@ -63,7 +64,7 @@ const Post = ({ post }: { post: PostType }) => {
           <PersonIcon sx={{ color: "#000000", scale: 1.5 }} />
         </ProfileImage>
         <Typography variant="body1">
-          {post.time}
+          {moment.unix(post.time).fromNow()}
         </Typography>
       </PostMetadata>
       <PostContent>
@@ -80,19 +81,19 @@ export default function Page() {
 
   const temp_fallback_posts: PostType[] = [
     {
-      time: "1 February 2025",
+      time: 1740992164,
       liked: false,
       likes: 1017,
       content: "This course provides an introduction to building secure software applications. It examines the software development life cycle and teaches what developers can do in each step to make their software more secure.  It also will cover common vulnerabilities that exist and how developers can avoid or safeguard against them. Students completing this course should be able to build and deploy software with fewer security issues. Intended audience: Fourth year CS students (CS 45X)"
     },
     {
-      time: "3 hours ago",
+      time: 1740819364,
       liked: false,
       likes: 5796,
       content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
     },
     {
-      time: "5 hours ago",
+      time: 1740974164,
       liked: false,
       likes: 0,
       content: "A button is a fastener that joins two pieces of fabric together by slipping through a loop or by sliding through a buttonhole. In modern clothing and fashion design, buttons are commonly made of plastic but also may be made of metal, wood, or seashell. Buttons can also be used on containers such as wallets and bags."
