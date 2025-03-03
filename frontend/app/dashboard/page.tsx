@@ -15,8 +15,8 @@ import PersonIcon from "@mui/icons-material/Person";
 
 const postSchema = yup.object({
   time: yup.number().required(),
-  liked: yup.boolean().required(),
-  likes: yup.number().required(),
+  liked: yup.boolean().optional(),
+  likes: yup.number().optional(),
   content: yup.string().required(),
 })
 
