@@ -6,7 +6,7 @@ import React from "react";
 
 import ContentWrapper from "../../components/ContentWrapper";
 import PageHeader from "../../components/PageHeader";
-import { BoldText, MainContent } from "../../components/Utils"
+import { BoldText, MainContent } from "../../components/Utils";
 
 import { Alert, Button, Snackbar, TextField, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
@@ -16,29 +16,26 @@ export default function Page() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  
-  const submit = useCallback(
-    async (content: string | null) => {
-      try {
-        const response = await fetch(`${API_URL}/post`, {
-          method: "POST",
-          body: JSON.stringify({ content }),
-        });
-        if (response.ok) {
-          setSuccess(true);
-          setLoading(false);
-          setContent("");
-        } else {
-          setError(true);
-          setLoading(false);
-        }
-      } catch {
+
+  const submit = useCallback(async (content: string | null) => {
+    try {
+      const response = await fetch(`${API_URL}/post`, {
+        method: "POST",
+        body: JSON.stringify({ content }),
+      });
+      if (response.ok) {
+        setSuccess(true);
+        setLoading(false);
+        setContent("");
+      } else {
         setError(true);
         setLoading(false);
       }
-    },
-    []
-  );
+    } catch {
+      setError(true);
+      setLoading(false);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,7 +45,14 @@ export default function Page() {
 
   return (
     <>
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
         <PageHeader hasPostButton={false} />
         <ContentWrapper>
           <Typography variant="h3" marginTop="45px" marginBottom="40px">
@@ -58,8 +62,16 @@ export default function Page() {
             <Typography variant="h6" align="center" marginTop="30px">
               <BoldText>Make a post</BoldText>
             </Typography>
-            <Typography variant="body1" align="center" marginTop="30px" marginLeft="30px" marginRight="30px">
-              Before submitting, please ensure your post contains only respectful and relevant content. Posts cannot be edited or removed after submitting.
+            <Typography
+              variant="body1"
+              align="center"
+              marginTop="30px"
+              marginLeft="30px"
+              marginRight="30px"
+            >
+              Before submitting, please ensure your post contains only
+              respectful and relevant content. Posts cannot be edited or removed
+              after submitting.
             </Typography>
             <form onSubmit={(e) => handleSubmit(e)}>
               <Stack
