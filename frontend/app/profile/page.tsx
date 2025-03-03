@@ -38,7 +38,11 @@ export default function Page() {
         throw new Error();
       }
       return response.json();
+<<<<<<< HEAD
     } catch (error) {
+=======
+    } catch {
+>>>>>>> origin/main
       setError(true);
       return {"username": "temp_fallback"};
     }
@@ -93,12 +97,12 @@ export default function Page() {
             </Snackbar>
             <Divider variant="middle" className="p-2" />
             <Typography align="center" marginTop="30px">
-              <Link href="/contact" underline="hover">
+              <Link href="/contact">
                 Contact us
               </Link>
             </Typography>
             <Typography align="center" margin="20px" color="#ff0000">
-              <Link href="/delete-account" underline="hover">
+              <Link href="/delete-account">
                 Delete account
               </Link>
             </Typography>

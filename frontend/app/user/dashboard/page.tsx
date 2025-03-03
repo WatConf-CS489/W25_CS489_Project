@@ -3,15 +3,41 @@
 import { API_URL } from "@/constants";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
+<<<<<<< HEAD
 
 import ContentWrapper from "../../components/ContentWrapper";
 import PageHeader from "../../components/PageHeader";
+=======
+import * as yup from "yup";
+
+import ContentWrapper from "@/components/ContentWrapper";
+import PageHeader from "@/components/PageHeader";
+>>>>>>> origin/main
 
 import { Alert, IconButton, List, ListItem, Snackbar, Typography } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
 
+<<<<<<< HEAD
 const Post = ({ post }) => {
+=======
+const postSchema = yup.object({
+  time: yup.string().required(),
+  liked: yup.boolean().required(),
+  likes: yup.number().required(),
+  content: yup.string().required(),
+})
+
+const responseSchema = yup.object({
+  posts: yup
+    .array(postSchema)
+    .required(),
+});
+
+type PostType = yup.InferType<typeof postSchema>;
+
+const Post = ({ post }: { post: PostType }) => {
+>>>>>>> origin/main
   const ProfileImage = styled(IconButton)({
     color: "#000000",
     backgroundColor: "#d9d9d9",
@@ -62,7 +88,11 @@ const Post = ({ post }) => {
 export default function Page() {
   const [error, setError] = useState(false);
 
+<<<<<<< HEAD
   const temp_fallback_posts = [
+=======
+  const temp_fallback_posts: PostType[] = [
+>>>>>>> origin/main
     {
       time: "1 February 2025",
       liked: false,
@@ -89,8 +119,13 @@ export default function Page() {
       if (!response.ok) {
         throw new Error();
       }
+<<<<<<< HEAD
       return response.json();
     } catch (error) {
+=======
+      return await responseSchema.validate(await response.json());
+    } catch {
+>>>>>>> origin/main
       setError(true);
       return { posts: temp_fallback_posts };
     }

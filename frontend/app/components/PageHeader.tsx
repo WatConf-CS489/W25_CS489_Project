@@ -1,6 +1,6 @@
 "use client";
 
-import { AppBar, Button, IconButton, Link, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, IconButton, IconButtonProps, Link, Toolbar, Typography } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
 
@@ -40,7 +40,7 @@ const PostButton = styled(Button)({
   },
 });
 
-const ProfileButton = styled(IconButton)({
+const ProfileButton = styled(IconButton)<IconButtonProps>({
   color: "#000000",
   backgroundColor: "#d9d9d9",
   "&:hover": {
@@ -65,6 +65,7 @@ export default function PageHeader({ hasPostButton }: { hasPostButton: boolean }
           </LeftChild>
           <RightChild>
             {hasPostButton &&
+<<<<<<< HEAD
             <PostButton variant="contained" component="a" href="/user/post">
               <Box sx={{ paddingLeft: "1vw", paddingRight: "1vw" }}>
               <Typography variant="h6">
@@ -72,10 +73,23 @@ export default function PageHeader({ hasPostButton }: { hasPostButton: boolean }
               </Typography>
               </Box>
             </PostButton>}
+=======
+            <a href="/user/post">
+              <PostButton variant="contained">
+                <Box sx={{ paddingLeft: "1vw", paddingRight: "1vw" }}>
+                <Typography variant="h6">
+                  <BoldText sx={{ color: "#000000" }}>Post</BoldText>
+                </Typography>
+                </Box>
+              </PostButton>
+            </a>}
+>>>>>>> origin/main
             <Box sx={{ display: "flex", marginLeft: "3vw" }}>
-              <ProfileButton component="a" href="/user/profile">
-                <PersonIcon sx={{ color: "#000000" }} />
-              </ProfileButton>
+              <a href="/user/profile">
+                <ProfileButton>
+                  <PersonIcon sx={{ color: "#000000" }} />
+                </ProfileButton>
+              </a>
             </Box>
           </RightChild>
         </StyledToolbar>
