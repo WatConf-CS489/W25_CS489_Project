@@ -4,3 +4,7 @@
 # backend
 __pycache__
 .mypy_cache
+
+# secrets
+/crypt/crypt.key
+/crypt/unlocked
