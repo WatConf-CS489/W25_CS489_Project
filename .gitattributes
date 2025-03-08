@@ -1,0 +1,1 @@
+/nginx/tls/local.kabir.dev.key filter=git-crypt diff=git-crypt
