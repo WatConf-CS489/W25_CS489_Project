@@ -19,6 +19,10 @@ jobs:
       - name: Install Make
         run: sudo apt-get install -y make
 
+      - name: Set up git-crypt
+        run: |
+          sudo apt-get install -y git-crypt
+
       - name: Run Make to start services
         run: make
 
