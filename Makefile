@@ -1,6 +1,6 @@
 .PHONY: up
 # start services
-up:
+up: crypt/unlocked
 	docker compose up --build -d
 
 .PHONY: down
@@ -53,3 +53,7 @@ seed:
 	@set -o allexport && source backend/envs/dev.env && set +o allexport; \
 	docker cp backend/src/seed.sql db:/seed.sql; \
 	docker exec -it db psql -U $$POSTGRES_USER -d $$POSTGRES_DB -f /seed.sql
+
+crypt/unlocked:
+	git crypt unlock crypt/crypt.key
+	touch crypt/unlocked
