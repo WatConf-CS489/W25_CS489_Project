@@ -18,7 +18,7 @@ import { useState } from "react";
 export default function Page() {
   const [email, setEmail] = useState("");
 
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,7 +30,8 @@ export default function Page() {
     if (startResponse.ok) {
       setSuccess(true);
     } else {
-      setError(true);
+      const { error } = await startResponse.json()
+      setError(error);
     }
   };
 
@@ -82,19 +83,19 @@ export default function Page() {
                   Send Email
                 </Button>
                 <Snackbar
-                  open={error}
+                  open={!!error}
                   anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                   autoHideDuration={5000}
-                  onClose={() => setError(false)}
+                  onClose={() => setError(null)}
                 >
                   <Alert
                     severity="error"
                     variant="filled"
                     sx={{ width: "100%" }}
-                    onClose={() => setError(false)}
+                    onClose={() => setError(null)}
                   >
-                    <Typography>Registration has failed. </Typography>
-                    <Typography>Are you using your Waterloo email?</Typography>
+                    <Typography>Registration has failed.</Typography>
+                    <Typography>{error}</Typography>
                   </Alert>
                 </Snackbar>
               </>
