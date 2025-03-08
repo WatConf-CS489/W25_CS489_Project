@@ -1,0 +1,38 @@
+name: DAST Security Scan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dast_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Docker
+        run: docker --version
+
+      - name: Start Services with Docker Compose
+        run: docker-compose up -d
+
+      - name: Wait for Services to Start
+        run: sleep 30
+
+      - name: Run OWASP ZAP Scan
+        uses: zaproxy/action-full-scan@v0.5.0
+        with:
+          target: "https://localhost"
+          allow_issue_writing: false
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: zap-report
+          path: report.json
+
+      - name: Stop Services
+        run: docker-compose down
