@@ -14,7 +14,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import * as yup from "yup";
 
 export default function Page() {
   const [email, setEmail] = useState("");
