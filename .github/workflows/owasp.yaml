@@ -13,18 +13,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
+      - name: Set Up Docker
+        run: docker --version
 
-      - name: Install Make
-        run: sudo apt-get install -y make
-
-      - name: Set up git-crypt
-        run: |
-          sudo apt-get install -y git-crypt
-
-      - name: Run Make to start services
-        run: make
+      - name: Start Services with Docker Compose
+        run: docker-compose up -d
 
       - name: Wait for Services to Start
         run: sleep 30
@@ -32,7 +25,7 @@ jobs:
       - name: Run OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.5.0
         with:
-          target: "https://localhost"
+          target: "https://localhost:443"
           allow_issue_writing: false
 
       - name: Upload ZAP Report
