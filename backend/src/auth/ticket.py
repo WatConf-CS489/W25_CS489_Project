@@ -15,6 +15,9 @@ rsa_key = RSA.import_key(rsa_key_pem)
 scheme = pss.new(rsa_key)
 
 
+def get_public_key() -> str:
+    return rsa_key.publickey().export_key().decode("utf-8")
+
 def sign_blinded_ticket(blinded_ticket: str) -> str:
     ticket_bytes = bytes.fromhex(blinded_ticket)
 

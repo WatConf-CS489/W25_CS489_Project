@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
 import uuid
-from flask import jsonify, request
+from flask import Response, jsonify, request
 from pydantic import BaseModel
 from sqlalchemy import DateTime, select
-from src.auth.ticket import sign_blinded_ticket
+from src.auth.ticket import get_public_key, sign_blinded_ticket
 from src.extensions import db
 from src.base import DBModel, app
 from sqlalchemy.orm import Mapped, mapped_column
@@ -95,3 +95,8 @@ def handler_confirm_email():
 
     signed_ticket = sign_blinded_ticket(body.blinded_ticket)
     return jsonify({"signed_ticket": signed_ticket}), 200
+
+
+@app.route("/auth/verify/pubkey", methods=["GET"])
+def handler_public_key():
+    return Response(get_public_key(), content_type="text/plain")
