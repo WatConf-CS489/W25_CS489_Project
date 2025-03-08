@@ -1,7 +1,7 @@
 name: DAST Security Scan
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
