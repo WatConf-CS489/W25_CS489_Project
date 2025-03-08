@@ -2,6 +2,17 @@
 
 W25 CS489 (Secure Programming) Project
 
+## Setup
+
+After checking out this repo, make sure you configure git-crypt.
+1. Install git-crypt, make sure it's in your PATH (check: you should see help text when you run `git crypt`)
+    - Windows/Linux: [GitHub Release](https://github.com/AGWA/git-crypt/releases/tag/0.7.0)
+    - macOS: `brew install git-crypt`
+2. Place `crypt.key` in the repo inside the `crypt/` directory (ask Kabir for this file)
+3. Run `make`, which will automatically decrypt the secrets for you.
+
+Note: `crypt.key` should be treated as highly sensitive. It's gitignored but still be VERY careful to not check it in.
+
 ## Development
 
 If you just want to run the BE+FE,

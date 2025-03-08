@@ -18,16 +18,12 @@ function fromHexString(hexString: string) {
 }
 
 const publicKeyPromise = (async () => {
+  const pem = await (await fetch(`${API_URL}/auth/verify/pubkey`)).text();
+  const derRaw = atob(pem.split("-----")[2]);
+  const der = new Uint8Array(derRaw.split("").map((c) => c.charCodeAt(0)));
   return await crypto.subtle.importKey(
-    "jwk",
-    {
-      alg: "PS384",
-      e: "AQAB",
-      ext: true,
-      key_ops: ["verify"],
-      kty: "RSA",
-      n: "pQmF0SprIYPPHgJuGJxYEVZ7FV2pDy_sXww0Oq7MdZzfW2DVZy4yCqWgUFDIu3aGIxxXpjeF52Pa1IK3vMFrf8609CIBHtHd2ndaE_CGyJM7amYwyDUO02dYZXrWibJkd1Xz61Yp4gNF15JUft5t18PakcW8moj6ZWgXHXdYQ8IK5AvIWxTDPBErsDk7OuaXlWtQsKQBGnGssvUZirMccyTPmhye5Kj6c27c0MxWG2yFwijKYGMhkLBU6JLH_uPiIYq-ZrgT_YZSHwwAZpKiCAFlzlPgRk8Jf_oJXtjPMSrIgXvjUKzLuMw-Uc1zQ7bHkW7bcV0tRcob10hRF9TMMQ",
-    },
+    "spki",
+    der,
     { name: "RSA-PSS", hash: "SHA-384" },
     true,
     ["verify"]
