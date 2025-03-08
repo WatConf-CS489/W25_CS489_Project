@@ -29,7 +29,7 @@ jobs:
           allow_issue_writing: false
 
       - name: Upload ZAP Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: zap-report
           path: report.json
