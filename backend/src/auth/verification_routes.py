@@ -20,9 +20,22 @@ class EmailAddress(DBModel):
     verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
-def is_valid_email(email: str) -> bool:
-    # TODO: disallow aliases?
-    return email.endswith("@uwaterloo.ca")
+def validate_email(email: str):
+    components = email.split("@")
+
+    if len(components) != 2:
+        raise ValueError("Email must have exactly one '@' symbol")
+    
+    [prefix, domain] = components
+
+    if domain != "uwaterloo.ca":
+        raise ValueError("Email must end with '@uwaterloo.ca'")
+    
+    if len(prefix) < 2:
+        raise ValueError("Email must be at least 2 characters long")
+
+    if prefix.find(".") != -1:
+        raise ValueError("Email must not contain '.'. Please use your WatIAM username.")
 
 
 def send_email_code(email: str, code: str):
@@ -38,8 +51,10 @@ class SendEmailRequest(BaseModel):
 def handler_send_email():
     body = SendEmailRequest.model_validate_json( request.data)
 
-    if not is_valid_email(body.email):
-        return jsonify({"error": "Invalid email"}), 400
+    try:
+        validate_email(body.email)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     
     email = db.session.execute(
         select(EmailAddress).where(EmailAddress.email == body.email)
