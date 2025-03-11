@@ -31,12 +31,3 @@ jobs:
         with:
           target: "https://local.kabir.dev"
           allow_issue_writing: false
-
-      - name: Upload ZAP Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap-report
-          path: report.json
-
-      - name: Stop Services
-        run: make down
