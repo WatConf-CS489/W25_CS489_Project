@@ -12,17 +12,15 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
-
-      - name: Install Docker Compose
+      
+      - name: Unlock Git Crypt
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+          sudo apt update
+          sudo apt install -y git-crypt
+          echo ${{ secrets.GIT_CRYPT_KEY }} | base64 -d | git-crypt unlock -
 
       - name: Start Services with Docker Compose
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for Services to Start
         run: sleep 30
@@ -30,7 +28,7 @@ jobs:
       - name: Run OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.5.0
         with:
-          target: "https://localhost:443"
+          target: "https://local.kabir.dev"
           allow_issue_writing: false
 
       - name: Upload ZAP Report
