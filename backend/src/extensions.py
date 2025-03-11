@@ -10,7 +10,7 @@ from src.base import app, DBModel
 logging.getLogger().setLevel(logging.INFO)
 
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 
 logging.getLogger().setLevel(logging.INFO)
 
