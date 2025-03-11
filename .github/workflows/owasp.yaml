@@ -1,9 +1,6 @@
 name: DAST Security Scan
 
-on:
-  pull_request:
-    branches:
-      - main
+on: [push]
 
 jobs:
   dast_scan:
