@@ -1,7 +1,7 @@
 .PHONY: up
 # start services
 up: crypt/unlocked
-	docker compose up --build -d
+	docker compose up --build -d --wait
 
 .PHONY: down
 # stop services
