@@ -17,16 +17,17 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y git-crypt
-          echo ${{ secrets.GIT_CRYPT_KEY }} | base64 -d | git-crypt unlock -
+          echo ${{ secrets.GIT_CRYPT_KEY }} | base64 -d | git crypt unlock -
+          touch crypt/unlocked
 
       - name: Start Services with Docker Compose
-        run: docker compose up -d
+        run: make PROD=1
 
       - name: Wait for Services to Start
         run: sleep 30
 
       - name: Run OWASP ZAP Scan
-        uses: zaproxy/action-full-scan@v0.5.0
+        uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: "https://local.kabir.dev"
           allow_issue_writing: false
@@ -38,4 +39,4 @@ jobs:
           path: report.json
 
       - name: Stop Services
-        run: docker-compose down
+        run: make down
