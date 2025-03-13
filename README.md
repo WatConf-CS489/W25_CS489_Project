@@ -52,3 +52,14 @@ Set `PROD=1`:
 ```bash
 make PROD=1
 ```
+
+## Testing
+
+### Pythonfuzz
+
+You can run the fuzzer with `./scripts/fuzz.sh <target> [args...]`. For example,
+```sh
+./scripts/fuzz.sh crypto
+```
+
+To list all available fuzz targets, run `./scripts/fuzz.sh` by itself.
