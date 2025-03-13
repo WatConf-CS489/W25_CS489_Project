@@ -15,7 +15,7 @@ def crypto(buf):
     sign_blinded_ticket(buf.hex())
 
 def print_help():
-    print(f"Usage: fuzz.sh <target> [args...]")
+    print("Usage: fuzz.sh <target> [args...]")
     print("Available targets:")
     for t in all_targets:
         print(f"- {t}")
