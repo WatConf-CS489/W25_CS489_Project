@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from src.base import app
 from src.extensions import db, r
 from src.auth.user import PasskeyCredential, User
-from sqlalchemy import select
+from sqlalchemy import select, text
 from flask import request, abort, jsonify
 from flask_login import login_user
 from webauthn import generate_authentication_options, options_to_json
@@ -28,8 +28,8 @@ def login_start():
     body = LoginStartRequest.model_validate_json(request.data)
 
     if body.username:
-        user = db.session.execute(
-            select(User).where(User.username == body.username)
+        user: User | None = db.session.execute(
+            text(f"select * from public.user where username = '{body.username}' limit 1")
         ).scalar_one_or_none()
         if not user:
             return jsonify({"error": "User not found"}), 400
