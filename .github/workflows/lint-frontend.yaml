@@ -12,6 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Unlock Git Crypt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-crypt
+          echo ${{ secrets.GIT_CRYPT_KEY }} | base64 -d | git crypt unlock -
+          touch crypt/unlocked
       - name: Run ESLint
         run: docker compose run --rm -it frontend bun lint --format json --output-file eslint_report.json
         continue-on-error: true
