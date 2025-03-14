@@ -3,7 +3,6 @@ import Cryptodome.Hash.SHA384 as SHA384
 import Cryptodome.Signature.pss as pss
 import Cryptodome.PublicKey.RSA as RSA
 from Cryptodome.Util.number import bytes_to_long
-from src.base import app
 
 rsa_key_b64 = os.getenv("RSA_KEY")
 rsa_key_pem = f"""-----BEGIN RSA PRIVATE KEY-----
