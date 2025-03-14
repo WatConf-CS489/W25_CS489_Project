@@ -16,7 +16,6 @@ import Link from "next/link";
 export default function Page() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const x = 5;
 
   const router = useRouter();
 
