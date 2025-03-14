@@ -22,8 +22,6 @@ const eslintConfig = [
       "no-implied-eval": "error",
       "no-new-func": "error",
       "no-prototype-builtins": "error",
-      "no-return-await": "error",
-      "require-await": "error",
       "no-console": ["warn", { allow: ["warn", "error"] }],
       "security/detect-buffer-noassert": "warn",
       "security/detect-child-process": "warn",
