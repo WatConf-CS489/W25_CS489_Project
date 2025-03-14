@@ -3,4 +3,9 @@
 set -e
 
 bun install --frozen-lockfile
-bun run dev
+
+if [[ $# -eq 0 ]]; then
+    bun run dev
+else
+    "$@"
+fi
