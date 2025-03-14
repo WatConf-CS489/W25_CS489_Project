@@ -21,7 +21,7 @@ const publicKeyPromise = (async () => {
   const pem = await (await fetch(`${API_URL}/auth/verify/pubkey`)).text();
   const derRaw = atob(pem.split("-----")[2]);
   const der = new Uint8Array(derRaw.split("").map((c) => c.charCodeAt(0)));
-  return await crypto.subtle.importKey(
+  return crypto.subtle.importKey(
     "spki",
     der,
     { name: "RSA-PSS", hash: "SHA-384" },
