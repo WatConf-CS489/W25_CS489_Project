@@ -3,7 +3,7 @@ import uuid
 from flask import Response, jsonify, request
 from pydantic import BaseModel
 from sqlalchemy import DateTime, select
-from src.auth.ticket import get_public_key, sign_blinded_ticket
+from src.auth.ticket import get_public_key_pem, sign_blinded_ticket
 from src.extensions import db
 from src.base import DBModel, app
 from sqlalchemy.orm import Mapped, mapped_column
@@ -99,4 +99,4 @@ def handler_confirm_email():
 
 @app.route("/auth/verify/pubkey", methods=["GET"])
 def handler_public_key():
-    return Response(get_public_key(), content_type="text/plain")
+    return Response(get_public_key_pem(), content_type="text/plain")

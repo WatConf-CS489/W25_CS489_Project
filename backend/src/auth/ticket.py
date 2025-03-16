@@ -1,21 +1,22 @@
-import os
+from os import getenv
+from base64 import b64decode
+from functools import lru_cache
 import Cryptodome.Hash.SHA384 as SHA384
 import Cryptodome.Signature.pss as pss
 import Cryptodome.PublicKey.RSA as RSA
 from Cryptodome.Util.number import bytes_to_long
 
-rsa_key_b64 = os.getenv("RSA_KEY")
-rsa_key_pem = f"""-----BEGIN RSA PRIVATE KEY-----
-{rsa_key_b64}
------END RSA PRIVATE KEY-----
-"""
-rsa_key = RSA.import_key(rsa_key_pem)
+@lru_cache(maxsize=1)
+def get_private_key() -> RSA.RsaKey:
+    # generate with:
+    #   openssl genrsa | grep -Fv '-' | tr -d '\n'
+    key = getenv("RSA_KEY")
+    if key is None:
+        raise ValueError("RSA_KEY is not set")
+    return RSA.import_key(b64decode(key))
 
-scheme = pss.new(rsa_key)
-
-
-def get_public_key() -> str:
-    return rsa_key.publickey().export_key().decode("utf-8")
+def get_public_key_pem() -> str:
+    return get_private_key().publickey().export_key().decode("utf-8")
 
 def sign_blinded_ticket(blinded_ticket: str) -> str:
     ticket_bytes = bytes.fromhex(blinded_ticket)
@@ -25,7 +26,7 @@ def sign_blinded_ticket(blinded_ticket: str) -> str:
     # RSA-PSS the *client* is responsible for calling EMSA-PSS-ENCODE during
     # the blinding operation.
     em_int = bytes_to_long(ticket_bytes)
-    signature: bytes = rsa_key._decrypt_to_bytes(em_int)  # type: ignore
+    signature: bytes = get_private_key()._decrypt_to_bytes(em_int)  # type: ignore
 
     return signature.hex()
 
@@ -33,7 +34,7 @@ def sign_blinded_ticket(blinded_ticket: str) -> str:
 def verify_ticket(ticket: str, signature: str) -> bool:
     signature_bytes = bytes.fromhex(signature)
     try:
-        scheme.verify(
+        pss.new(get_private_key()).verify(
             msg_hash=SHA384.new(ticket.encode("utf-8")),
             signature=signature_bytes
         )
