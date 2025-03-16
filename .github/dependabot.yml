@@ -4,6 +4,7 @@
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
+enable-beta-ecosystems: true # Needed for Bun support: https://github.com/dependabot/dependabot-core/issues/11602
 updates:
   - package-ecosystem: "bun" # See documentation for possible values
     directory: "/frontend" # Location of package manifests
