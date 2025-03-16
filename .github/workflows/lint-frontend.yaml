@@ -21,7 +21,7 @@ jobs:
       - name: Run ESLint
         run: |
           docker compose run --rm frontend bun lint --format json --output-file eslint_report_raw.json
-          jq '.[] | .filePath |= sub("^/usr/src/app";"frontend")' < frontend/eslint_report_raw.json > frontend/eslint_report.json
+          jq '[.[] | .filePath |= sub("^/usr/src/app";"frontend")]' < frontend/eslint_report_raw.json > frontend/eslint_report.json
         continue-on-error: true
       - name: Annotate Code Linting Results
         uses: ataylorme/eslint-annotate-action@v3
