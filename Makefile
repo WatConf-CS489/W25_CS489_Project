@@ -33,6 +33,11 @@ shell:
 exec:
 	docker compose exec -it backend bash -c "source .venv/bin/activate && bash"
 
+.PHONY: test
+# run backend tests
+test:
+	docker compose run --rm backend pytest
+
 .PHONY: logs
 # show logs
 logs:
