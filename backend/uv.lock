@@ -476,7 +476,7 @@ wheels = [
 
 [[package]]
 name = "pycryptodomex"
-version = "3.21.0"
+version = "3.22.0"
 source = { registry = "https://gitlab.com/api/v4/projects/19904939/packages/pypi/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/11/dc/e66551683ade663b5f07d7b3bc46434bf703491dbd22ee12d1f979ca828f/pycryptodomex-3.21.0.tar.gz", hash = "sha256:222d0bd05381dd25c32dd6065c071ebf084212ab79bab4599ba9e6a3e0009e6c", size = 4818543 }
 wheels = [
