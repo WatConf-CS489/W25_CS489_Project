@@ -10,7 +10,15 @@ updates:
     directory: "/frontend" # Location of package manifests
     schedule:
       interval: "weekly"
+    groups:
+      frontend-deps:
+        patterns:
+          - "*"
   - package-ecosystem: "uv"
     directory: "/backend"
     schedule:
       interval: "weekly"
+    groups:
+      backend-deps:
+        patterns:
+          - "*"
