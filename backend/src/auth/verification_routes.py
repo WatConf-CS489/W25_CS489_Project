@@ -54,7 +54,7 @@ def handler_send_email():
     try:
         validate_email(body.email)
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        return {}, 400
     
     email = db.session.execute(
         select(EmailAddress).where(EmailAddress.email == body.email)
