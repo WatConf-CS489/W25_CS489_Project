@@ -32,8 +32,6 @@ if __name__ == '__main__':
     if tgt := all_targets.get(tgt_name, None):
         if len(sys.argv) == 1:
             sys.argv += [f"src/fuzz/data/{tgt_name}/inputs", f"src/fuzz/data/{tgt_name}/seeds"]
-            tgt()
-        else:
-            tgt()
+        tgt()
     else:
         print_help()
