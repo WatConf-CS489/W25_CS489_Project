@@ -94,6 +94,10 @@ def handler_confirm_email():
     db.session.commit()
 
     signed_ticket = sign_blinded_ticket(body.blinded_ticket)
+
+    if signed_ticket is None:
+        return jsonify({"error": "Invalid blinded ticket"}), 400
+
     return jsonify({"signed_ticket": signed_ticket}), 200
 
 
