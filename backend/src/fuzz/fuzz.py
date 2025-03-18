@@ -11,8 +11,12 @@ def target(fn: Callable[[bytes], None]):
 
 @target
 def crypto(buf):
+    try:
+        round_tripped = bytes.fromhex(buf.decode("utf-8")).hex()
+    except:
+        return
     from src.auth.ticket import sign_blinded_ticket
-    sign_blinded_ticket(buf.hex())
+    sign_blinded_ticket(round_tripped)
 
 def print_help():
     print("Usage: fuzz.sh <target> [args...]")
