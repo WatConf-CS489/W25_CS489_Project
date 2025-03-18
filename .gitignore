@@ -4,6 +4,8 @@
 # backend
 __pycache__
 .mypy_cache
+/backend/crashes
+/backend/src/fuzz/data/*/inputs
 
 # secrets
 /crypt/crypt.key

@@ -11,8 +11,12 @@ def target(fn: Callable[[bytes], None]):
 
 @target
 def crypto(buf):
+    try:
+        round_tripped = bytes.fromhex(buf.decode("utf-8")).hex()
+    except:
+        return
     from src.auth.ticket import sign_blinded_ticket
-    sign_blinded_ticket(buf.hex())
+    sign_blinded_ticket(round_tripped)
 
 def print_help():
     print("Usage: fuzz.sh <target> [args...]")
@@ -24,7 +28,10 @@ def print_help():
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print_help()
-    if tgt := all_targets.get(sys.argv.pop(1), None):
+    tgt_name = sys.argv.pop(1)
+    if tgt := all_targets.get(tgt_name, None):
+        if len(sys.argv) == 1:
+            sys.argv += [f"src/fuzz/data/{tgt_name}/inputs", f"src/fuzz/data/{tgt_name}/seeds"]
         tgt()
     else:
         print_help()
