@@ -18,17 +18,20 @@ def get_private_key() -> RSA.RsaKey:
 def get_public_key_pem() -> str:
     return get_private_key().publickey().export_key().decode("utf-8")
 
-def sign_blinded_ticket(blinded_ticket: str) -> str:
-    ticket_bytes = bytes.fromhex(blinded_ticket)
+def sign_blinded_ticket(blinded_ticket: str) -> str | None:
+    try:
+        ticket_bytes = bytes.fromhex(blinded_ticket)
 
-    # these are the last two steps of `PSS_SigScheme.sign`. We can't use that
-    # function directly since it calls `EMSA-PSS-ENCODE`, but in the case of
-    # RSA-PSS the *client* is responsible for calling EMSA-PSS-ENCODE during
-    # the blinding operation.
-    em_int = bytes_to_long(ticket_bytes)
-    signature: bytes = get_private_key()._decrypt_to_bytes(em_int)  # type: ignore
+        # these are the last two steps of `PSS_SigScheme.sign`. We can't use that
+        # function directly since it calls `EMSA-PSS-ENCODE`, but in the case of
+        # RSA-PSS the *client* is responsible for calling EMSA-PSS-ENCODE during
+        # the blinding operation.
+        em_int = bytes_to_long(ticket_bytes)
+        signature: bytes = get_private_key()._decrypt_to_bytes(em_int)  # type: ignore
 
-    return signature.hex()
+        return signature.hex()
+    except:
+        return None
 
 
 def verify_ticket(ticket: str, signature: str) -> bool:
