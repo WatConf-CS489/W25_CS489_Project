@@ -28,7 +28,12 @@ def print_help():
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print_help()
-    if tgt := all_targets.get(sys.argv.pop(1), None):
-        tgt()
+    tgt_name = sys.argv.pop(1)
+    if tgt := all_targets.get(tgt_name, None):
+        if len(sys.argv) == 1:
+            sys.argv += [f"src/fuzz/data/{tgt_name}/inputs", f"src/fuzz/data/{tgt_name}/corpus"]
+            tgt()
+        else:
+            tgt()
     else:
         print_help()
