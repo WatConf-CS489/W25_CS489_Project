@@ -39,4 +39,4 @@ def create_post():
         }), 201
     except Exception as err:
         db.session.rollback()
-        return jsonify({'error': 'Error occurred creating post', 'msg': str(err)}), 500
+        return jsonify({'error': 'Error occurred creating post'}), 500

@@ -93,7 +93,7 @@ def handler_register():
             expected_origin=rp_origins,
         )
     except Exception as err:
-        return {"verified": False, "msg": str(err), "status": 400}
+        return {"verified": False, "status": 400}
 
     user = User(username=username, ticket=body.ticket, password_hash="not_null_i_promise_1017")
     db.session.add(user)
