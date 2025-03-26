@@ -4,9 +4,14 @@ from src.extensions import db
 from src.auth.user import get_current_user
 from src.posts.post import Post
 from flask import request, jsonify
+from html import escape
 
 class CreatePostRequest(BaseModel):
     content: str
+
+def escape_html(content):
+    # Wrapper for stdlib html.escape
+    return escape(content)
 
 @app.route("/post", methods=["POST"])
 def create_post():
@@ -20,9 +25,11 @@ def create_post():
     if not content:
         return jsonify({'error': 'Missing required fields: content'}), 400
 
+    escaped_content = escape_html(content)
+
     try:
         new_post = Post(
-            content=content,
+            content=escaped_content,
             user_id=get_current_user().id
         )
 
@@ -39,4 +46,4 @@ def create_post():
         }), 201
     except Exception as err:
         db.session.rollback()
-        return jsonify({'error': 'Error occurred creating post', 'msg': str(err)}), 500
+        return jsonify({'error': 'Error occurred creating post'}), 500

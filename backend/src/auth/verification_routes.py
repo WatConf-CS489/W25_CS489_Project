@@ -3,7 +3,7 @@ import uuid
 from flask import Response, jsonify, request
 from pydantic import BaseModel
 from sqlalchemy import DateTime, select
-from src.auth.ticket import get_public_key, sign_blinded_ticket
+from src.auth.ticket import get_public_key_pem, sign_blinded_ticket
 from src.extensions import db
 from src.base import DBModel, app
 from sqlalchemy.orm import Mapped, mapped_column
@@ -54,7 +54,7 @@ def handler_send_email():
     try:
         validate_email(body.email)
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        return {}, 400
     
     email = db.session.execute(
         select(EmailAddress).where(EmailAddress.email == body.email)
@@ -94,9 +94,13 @@ def handler_confirm_email():
     db.session.commit()
 
     signed_ticket = sign_blinded_ticket(body.blinded_ticket)
+
+    if signed_ticket is None:
+        return jsonify({"error": "Invalid blinded ticket"}), 400
+
     return jsonify({"signed_ticket": signed_ticket}), 200
 
 
 @app.route("/auth/verify/pubkey", methods=["GET"])
 def handler_public_key():
-    return Response(get_public_key(), content_type="text/plain")
+    return Response(get_public_key_pem(), content_type="text/plain")

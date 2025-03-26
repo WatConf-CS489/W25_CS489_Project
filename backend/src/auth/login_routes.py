@@ -87,7 +87,7 @@ def login_finish():
             credential_current_sign_count=db_credential.sign_count,
         )
     except Exception as err:
-        return jsonify({"verified": False, "msg": str(err), "status": 400}), 400
+        return jsonify({"verified": False, "status": 400}), 400
 
     db_credential.sign_count = verification.new_sign_count
 

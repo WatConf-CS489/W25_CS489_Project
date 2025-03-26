@@ -1,0 +1,30 @@
+name: Lint Frontend
+
+on: [push]
+
+jobs:
+  lint_frontend:
+    permissions:
+      contents: read
+      packages: read
+      pull-requests: read
+      checks: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unlock Git Crypt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-crypt
+          echo ${{ secrets.GIT_CRYPT_KEY }} | base64 -d | git crypt unlock -
+          touch crypt/unlocked
+      - name: Run ESLint
+        run: |
+          docker compose run --rm frontend bun lint --format json --output-file eslint_report_raw.json
+          jq '[.[] | .filePath |= sub("^/usr/src/app";"frontend")]' < frontend/eslint_report_raw.json > frontend/eslint_report.json
+        continue-on-error: true
+      - name: Annotate Code Linting Results
+        uses: ataylorme/eslint-annotate-action@v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          report-json: "frontend/eslint_report.json"

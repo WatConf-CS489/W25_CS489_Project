@@ -30,7 +30,7 @@ export default function Page() {
     if (startResponse.ok) {
       setSuccess(true);
     } else {
-      const { error } = await startResponse.json()
+      const { error } = await startResponse.json();
       setError(error);
     }
   };

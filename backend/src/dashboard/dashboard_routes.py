@@ -25,4 +25,4 @@ def read_all_posts():
         return jsonify({"posts": posts_array}), 200
 
     except Exception as err:
-        return jsonify({"error": "Failed to fetch posts", "msg": str(err)}), 500
+        return jsonify({"error": "Failed to fetch posts"}), 500

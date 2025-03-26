@@ -1,7 +1,7 @@
 .PHONY: up
 # start services
 up: crypt/unlocked
-	docker compose up --build -d
+	docker compose up --build -d --wait
 
 .PHONY: down
 # stop services
@@ -32,6 +32,11 @@ shell:
 # start a *new* shell in the backend container
 exec:
 	docker compose exec -it backend bash -c "source .venv/bin/activate && bash"
+
+.PHONY: test
+# run backend tests
+test:
+	docker compose run --rm backend pytest
 
 .PHONY: logs
 # show logs

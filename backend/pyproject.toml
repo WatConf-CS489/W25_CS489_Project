@@ -11,8 +11,10 @@ dependencies = [
     "gunicorn>=23.0.0",
     "inotify>=0.2.10",
     "psycopg2-binary>=2.9.10",
-    "pycryptodomex==3.21.0", # pinned since we use a private API
+    "pycryptodomex==3.22.0", # pinned since we use a private API
     "pydantic>=2.10.6",
+    "pytest>=8.3.5",
+    "pythonfuzz>=1.0.11",
     "redis>=5.2.1",
     "sqlalchemy>=2.0.38",
     "types-flask-cors>=5.0.0.20240902",
@@ -22,3 +24,13 @@ dependencies = [
 [tool.mypy]
 follow_untyped_imports = true
 check_untyped_defs = true
+
+[tool.uv.sources]
+pythonfuzz = { index = "pythonfuzz" }
+
+[[tool.uv.index]]
+name = "pythonfuzz"
+url = "https://gitlab.com/api/v4/projects/19904939/packages/pypi/simple"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
