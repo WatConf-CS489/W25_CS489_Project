@@ -1,3 +1,12 @@
+
 #!/bin/bash
-bun install --frozen-lockfile;
-bun run dev;
+
+set -e
+
+bun install --frozen-lockfile
+
+if [[ $# -eq 0 ]]; then
+    bun run dev
+else
+    "$@"
+fi

@@ -1,8 +1,15 @@
+
 #!/bin/bash
 
-uv sync --frozen;
+set -e
 
-source .venv/bin/activate;
+uv sync --frozen
 
-flask db upgrade;
-gunicorn "$FLASK_APP" --reload --log-level debug;
+source .venv/bin/activate
+
+if [[ $# -eq 0 ]]; then
+    flask db upgrade
+    gunicorn "$FLASK_APP" --reload --log-level debug
+else
+    "$@"
+fi
