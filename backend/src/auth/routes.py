@@ -1,6 +1,6 @@
 from flask import abort, jsonify, request
 from flask_login import login_required, login_user, logout_user
-from sqlalchemy import select
+from sqlalchemy import func, select, update
 from src.auth.user import User, get_current_user
 from src.base import app
 from src.extensions import db
@@ -21,4 +21,17 @@ def profile():
     return jsonify({
         "username": user.username,
         "is_moderator": user.is_moderator
-        }), 200
+    }), 200
+
+@app.route("/auth/delete-account", methods=["POST"])
+def delete_account():
+    db.session.execute(
+        update(User)
+        .where(User.id == get_current_user().id)
+        .values(deleted_at=func.now())
+    )
+    db.session.commit()
+
+    logout_user()
+
+    return jsonify({"message": "Account deleted successfully"}), 200

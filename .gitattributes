@@ -1,2 +1,2 @@
-/nginx/tls/local.kabir.dev.key filter=git-crypt diff=git-crypt
+/nginx/tls/*.key filter=git-crypt diff=git-crypt
 secrets.env filter=git-crypt diff=git-crypt

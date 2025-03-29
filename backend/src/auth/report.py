@@ -10,7 +10,7 @@ class Report(DBModel):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     reporter_id: Mapped[UUID] = mapped_column(UUID, ForeignKey("user.id"), nullable=False)
     reportee_id: Mapped[UUID] = mapped_column(UUID, ForeignKey("user.id"), nullable=False)
-    post_id: Mapped[int] = mapped_column(Integer, ForeignKey("posts.id"), nullable=False)
+    post_id: Mapped[UUID] = mapped_column(UUID, ForeignKey("posts.id"), nullable=False)
 
     reporter: Mapped['User'] = relationship("User", foreign_keys=[reporter_id], backref="reports_made")
     reportee: Mapped['User'] = relationship("User", foreign_keys=[reportee_id], backref="reports_received")

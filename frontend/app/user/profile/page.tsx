@@ -120,10 +120,10 @@ export default function Page() {
             </Snackbar>
             <Divider variant="middle" className="p-2" />
             <Typography align="center" marginTop="30px">
-              <Link href="/contact">Contact us</Link>
+              <Link href="mailto:watconfessions@gmail.com">Contact us</Link>
             </Typography>
             <Typography align="center" margin="20px" color="#ff0000">
-              <Link href="/delete-account">Delete account</Link>
+              <Link href="/user/delete">Delete account</Link>
             </Typography>
           </MainContent>
         </ContentWrapper>
