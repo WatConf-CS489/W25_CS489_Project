@@ -123,7 +123,14 @@ export default function Page() {
               <Link href="/contact">Contact us</Link>
             </Typography>
             <Typography align="center" margin="20px" color="#ff0000">
-              <Link href="/delete-account">Delete account</Link>
+              <Button color="error" onClick={async () => {
+                const response = await fetch(`${API_URL}/auth/delete-account`, {
+                  method: "POST",
+                })
+                if (response.ok) {
+                  router.push("/");
+                }
+              }}>Delete account</Button>
             </Typography>
           </MainContent>
         </ContentWrapper>

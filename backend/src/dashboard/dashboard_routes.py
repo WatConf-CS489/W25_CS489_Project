@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from src.auth.user import get_current_user
+from src.auth.user import User, get_current_user
 from src.auth.vote import Vote
 from src.base import app
 from src.extensions import db
@@ -17,7 +17,12 @@ class PostObject(BaseModel):
 @app.route("/readAll", methods=["GET"])
 def read_all_posts():
     try:
-        all_posts = db.session.query(Post).order_by(desc(Post.created_at)).all()
+        all_posts = db.session.execute(
+            select(Post)
+            .join(Post.user)
+            .where(User.deleted_at.is_(None))
+            .order_by(desc(Post.created_at))
+        ).scalars().all()
 
         posts_array = [
             PostObject(
