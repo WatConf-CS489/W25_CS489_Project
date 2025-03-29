@@ -1,7 +1,7 @@
 "use client";
 
 import { API_URL } from "@/constants";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import * as yup from "yup";
 import moment from "moment";
@@ -20,11 +20,13 @@ import {
 } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
+import ArrowUpward from "@mui/icons-material/ArrowUpward"
 
 const postSchema = yup.object({
+  id: yup.string().required(),
   time: yup.number().required(),
-  liked: yup.boolean().optional(),
-  likes: yup.number().optional(),
+  liked: yup.boolean().required(),
+  likes: yup.number().required(),
   content: yup.string().required(),
 });
 
@@ -63,6 +65,31 @@ const Post = ({ post }: { post: PostType }) => {
     borderRadius: "10px",
   });
 
+  const queryClient = useQueryClient();
+
+  const { mutate: toggleVoteMutation } = useMutation({
+    mutationFn: async (post: PostType) => {
+      const response = await fetch(`${API_URL}/toggle-vote`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          post_id: post.id,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+      });
+    },
+  });
+
   return (
     <ListItem
       alignItems="center"
@@ -75,6 +102,25 @@ const Post = ({ post }: { post: PostType }) => {
         <Typography variant="body1">
           {moment.unix(post.time).fromNow()}
         </Typography>
+        {/* Voting */}
+        <Box sx={{ flexGrow: 1 }} />
+        <Typography variant="body1" sx={{ marginRight: "10px" }}>
+          {post.likes} {post.likes === 1 ? "vote" : "votes"}
+        </Typography>
+        <IconButton
+          sx={{
+            color: "#000000",
+            backgroundColor: "#d9d9d9",
+            "&:hover": {
+              backgroundColor: "#d9d9d9",
+            },
+          }}
+          onClick={() => {
+            toggleVoteMutation(post);
+          }}
+        >
+          <ArrowUpward sx={{ color: post.liked ? "yellow" : "#000", scale: 1.5 }} />
+        </IconButton>
       </PostMetadata>
       <PostContent>
         <Typography
@@ -94,6 +140,7 @@ export default function Page() {
 
   const temp_fallback_posts: PostType[] = [
     {
+      id: "1",
       time: 1740992164,
       liked: false,
       likes: 1017,
@@ -101,6 +148,7 @@ export default function Page() {
         "This course provides an introduction to building secure software applications. It examines the software development life cycle and teaches what developers can do in each step to make their software more secure.  It also will cover common vulnerabilities that exist and how developers can avoid or safeguard against them. Students completing this course should be able to build and deploy software with fewer security issues. Intended audience: Fourth year CS students (CS 45X)",
     },
     {
+      id: "2",
       time: 1740819364,
       liked: false,
       likes: 5796,
@@ -108,6 +156,7 @@ export default function Page() {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
     },
     {
+      id: "3",
       time: 1740974164,
       liked: false,
       likes: 0,
