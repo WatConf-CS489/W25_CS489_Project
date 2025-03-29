@@ -1,6 +1,7 @@
 services:
   frontend:
     container_name: frontend
+    image: watconf-frontend
     build:
       context: ./frontend
   backend:
@@ -8,6 +9,7 @@ services:
       - backend/envs/common.env
       - backend/envs/secrets.env
     container_name: backend
+    image: watconf-backend
     build:
       context: ./backend
     depends_on:
@@ -27,7 +29,9 @@ services:
     volumes:
       - redis_data:/data
   nginx:
-    build: ./nginx
+    image: watconf-nginx
+    build:
+      context: ./nginx
     ports:
       - "443:443"
     depends_on:

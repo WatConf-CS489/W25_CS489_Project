@@ -1,4 +1,4 @@
-from typing import List
+from typing import TYPE_CHECKING, List
 from flask_login import UserMixin, current_user
 # from datetime import datetime
 from src.base import DBModel
@@ -8,6 +8,10 @@ from sqlalchemy import UUID, ForeignKey, Integer, LargeBinary, String, Text, fun
 from sqlalchemy.dialects.postgresql import JSONB
 from argon2 import PasswordHasher
 from webauthn.helpers.structs import AuthenticatorTransport
+if TYPE_CHECKING:
+    from src.posts.post import Post
+    from src.auth.vote import Vote
+
 ph = PasswordHasher()
 # based on https://github.com/duo-labs/duo-blog-going-passwordless-with-py-webauthn
 
@@ -35,12 +39,20 @@ class User(UserMixin, DBModel):
     password_hash: Mapped[str] = mapped_column(String(128), nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     is_banned: Mapped[bool] = mapped_column(Boolean, default=False)
-    passkey_credentials: Mapped[List['PasskeyCredential']] = relationship(back_populates='user')
     ticket: Mapped[str] = mapped_column(Text(), unique=True)
+    deleted_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    passkey_credentials: Mapped[List['PasskeyCredential']] = relationship(back_populates='user')
+    posts: Mapped[List['Post']] = relationship("Post", back_populates="user")
+    votes: Mapped[List['Vote']] = relationship("Vote", back_populates="user")
 
     def __repr__(self):
         return f'<User {self.username}>'
     
+    @property
+    def is_active(self) -> bool:
+        return not self.is_banned and self.deleted_at is None
+
     def set_password(self, password: str):
         """hashes and stores password"""
         self.password_hash = ph.hash(password)

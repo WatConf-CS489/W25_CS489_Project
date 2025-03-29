@@ -1,0 +1,6 @@
+FROM nginx:latest
+
+COPY ./config/default.conf.template /etc/nginx/templates/default.conf.template
+
+COPY ./tls/watconf.kabir.dev.crt /etc/nginx/ssl/fullchain.pem
+COPY ./tls/watconf.kabir.dev.key /etc/nginx/ssl/privkey.pem
