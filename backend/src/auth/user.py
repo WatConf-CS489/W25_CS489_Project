@@ -35,6 +35,7 @@ class User(UserMixin, DBModel):
     password_hash: Mapped[str] = mapped_column(String(128), nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     is_banned: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_moderator: Mapped[bool] = mapped_column(Boolean, default=False)
     passkey_credentials: Mapped[List['PasskeyCredential']] = relationship(back_populates='user')
     ticket: Mapped[str] = mapped_column(Text(), unique=True)
 
