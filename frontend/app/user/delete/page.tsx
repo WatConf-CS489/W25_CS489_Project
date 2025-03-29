@@ -19,6 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [username, setUsername] = useState("");
@@ -26,8 +27,16 @@ export default function Page() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const response = await fetch(`${API_URL}/auth/delete-account`, {
+      method: "POST",
+    });
+    if (response.ok) {
+      router.push("/");
+    }
   };
 
   return (
@@ -67,12 +76,11 @@ export default function Page() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
-
                 <Button
                   type="submit"
                   loading={loading}
                   variant="contained"
-                  sx={{ backgroundColor: "#3A3A3A" }}
+                  color="error"
                 >
                   Delete Account
                 </Button>
