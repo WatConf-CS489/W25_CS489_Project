@@ -120,17 +120,10 @@ export default function Page() {
             </Snackbar>
             <Divider variant="middle" className="p-2" />
             <Typography align="center" marginTop="30px">
-              <Link href="/contact">Contact us</Link>
+              <Link href="/user/contact">Contact us</Link>
             </Typography>
             <Typography align="center" margin="20px" color="#ff0000">
-              <Button color="error" onClick={async () => {
-                const response = await fetch(`${API_URL}/auth/delete-account`, {
-                  method: "POST",
-                })
-                if (response.ok) {
-                  router.push("/");
-                }
-              }}>Delete account</Button>
+              <Link href="/user/delete">Delete account</Link>
             </Typography>
           </MainContent>
         </ContentWrapper>
