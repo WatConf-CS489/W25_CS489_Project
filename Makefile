@@ -3,6 +3,17 @@
 up: crypt/unlocked
 	docker compose up --build -d --wait
 
+.PHONY: deploy
+deploy:
+ifeq ($(LIVE),)
+	@+$(MAKE) deploy LIVE=1
+else
+	docker compose build
+	$(foreach service,frontend backend nginx,\
+		docker save watconf-$(service) | gzip | docker -H "ssh://me@watconf.kabir.dev" load;)
+	docker -H "ssh://me@watconf.kabir.dev" compose up -d --wait
+endif
+
 .PHONY: down
 # stop services
 down:
@@ -51,6 +62,8 @@ endif
 
 ifneq ($(PROD),)
 export COMPOSE_FILE = docker-compose.yml$(COMPOSE_SEPARATOR)docker-compose.prod.yml
+else ifneq ($(LIVE),)
+export COMPOSE_FILE = docker-compose.yml$(COMPOSE_SEPARATOR)docker-compose.live.yml
 endif
 
 .PHONY: seed

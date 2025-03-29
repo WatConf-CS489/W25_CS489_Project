@@ -4,6 +4,9 @@ services:
       dockerfile: Dockerfile.prod
   backend:
     env_file:
-      - backend/envs/prod.env
+      - backend/envs/live.env
     build:
       dockerfile: Dockerfile.prod
+  nginx:
+    build:
+      dockerfile: Dockerfile.live

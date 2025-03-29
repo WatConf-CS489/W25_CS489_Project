@@ -91,6 +91,7 @@ def login_finish():
 
     db_credential.sign_count = verification.new_sign_count
 
-    login_user(user=user, remember=body.remember)
+    if not login_user(user=user, remember=body.remember):
+        return jsonify({"verified": False, "status": 400}), 400
 
     return jsonify({"verified": True}), 200
