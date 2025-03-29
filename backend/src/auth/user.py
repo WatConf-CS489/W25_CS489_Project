@@ -41,7 +41,7 @@ class User(UserMixin, DBModel):
     is_banned: Mapped[bool] = mapped_column(Boolean, default=False)
     ticket: Mapped[str] = mapped_column(Text(), unique=True)
     deleted_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    is_moderator: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_moderator: Mapped[bool] = mapped_column(Boolean, server_default='false', nullable=False)
     passkey_credentials: Mapped[List['PasskeyCredential']] = relationship(back_populates='user')
     posts: Mapped[List['Post']] = relationship("Post", back_populates="user")
     votes: Mapped[List['Vote']] = relationship("Vote", back_populates="user")

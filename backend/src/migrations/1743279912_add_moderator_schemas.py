@@ -1,8 +1,8 @@
-"""fix report foreign key types
+"""Add moderator schemas
 
-Revision ID: 1743278760
+Revision ID: 1743279912
 Revises: 1743229314
-Create Date: 2025-03-29 20:06:00.213482
+Create Date: 2025-03-29 20:25:12.478978
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '1743278760'
+revision: str = '1743279912'
 down_revision: Union[str, None] = '1743229314'
 branch_labels: Union[str, Sequence[str], None] = ()
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,7 +30,7 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['reporter_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.add_column('user', sa.Column('is_moderator', sa.Boolean(), nullable=False))
+    op.add_column('user', sa.Column('is_moderator', sa.Boolean(), server_default='false', nullable=False))
     # ### end Alembic commands ###
 
 
