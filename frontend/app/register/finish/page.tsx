@@ -2,24 +2,39 @@
 
 import { API_URL } from "@/constants";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 
 import { startRegistration } from "@simplewebauthn/browser";
 import useHash from "@/utils/useHash";
 import {
   Alert,
+  Box,
   Button,
   Checkbox,
   Container,
   Divider,
   FormControlLabel,
   Link,
+  Modal,
   Snackbar,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import sanitize from "@/utils/sanitize";
+import { TERMS_AND_CONDITIONS } from "@/constants";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "30%",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  outline: "none",
+  p: 4,
+};
 
 function parseHash(hash: string) {
   if (!hash.startsWith("#")) {
@@ -94,6 +109,7 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [agree, setAgree] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -134,6 +150,12 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
     }
   };
 
+  const handleAgree = async (
+    _: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+  ) => {
+    setAgree(true);
+  };
+
   return (
     <Container className="h-screen flex flex-col justify-center">
       <Typography
@@ -149,6 +171,33 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
       >
         WATConfessions
       </Typography>
+      <Modal open={!agree} disableEnforceFocus>
+        <Stack sx={style} spacing={1}>
+          <Typography align="center" variant="h4">
+            Terms of Service
+          </Typography>
+          <Box
+            sx={{
+              overflowY: "scroll",
+              height: "500px",
+              backgroundColor: "#ECECEC",
+              whiteSpace: "pre-wrap",
+              paddingX: 2,
+            }}
+          >
+            {TERMS_AND_CONDITIONS}
+          </Box>
+          <Button
+            type="submit"
+            loading={loading}
+            variant="contained"
+            sx={{ backgroundColor: "#3A3A3A" }}
+            onClick={(e) => handleAgree(e)}
+          >
+            I agree
+          </Button>
+        </Stack>
+      </Modal>
       <Container maxWidth="xs" sx={{ marginTop: 10 }}>
         <form onSubmit={(e) => handleSubmit(e)}>
           <Stack
@@ -180,6 +229,7 @@ function TicketView({ ticketPayload }: { ticketPayload: string }) {
               label="Remember me"
             />
             <Button
+              disabled={!agree}
               type="submit"
               loading={loading}
               variant="contained"
