@@ -7,14 +7,15 @@ from webauthn import generate_registration_options, options_to_json, verify_regi
 from webauthn.registration.verify_registration_response import parse_registration_credential_json
 from src.auth.ticket import verify_ticket
 from src.auth.user import PasskeyCredential, User
+from src.envs import get_base_url
 from src.extensions import db, r
 from src.base import app
 
-rp_id = "local.kabir.dev"
+rp_id = get_base_url()
 rp_name = "WatConfessions"
-rp_origins = [
-    "https://local.kabir.dev",
-]
+rp_origins = [f"https://{rp_id}"]
+
+app.logger.info(f"RP ID: {rp_id}")
 
 class RegisterStartRequest(BaseModel):
     username: str

@@ -4,6 +4,7 @@ from flask import Response, jsonify, request
 from pydantic import BaseModel
 from sqlalchemy import DateTime, select
 from src.auth.ticket import get_public_key_pem, sign_blinded_ticket
+from src.envs import get_base_url
 from src.extensions import db
 from src.base import DBModel, app
 from sqlalchemy.orm import Mapped, mapped_column
@@ -39,7 +40,8 @@ def validate_email(email: str):
 
 
 def send_email_code(email: str, code: str):
-    link = f"https://local.kabir.dev/register/verify?code={code}"
+    base = get_base_url()
+    link = f"https://{base}/register/verify?code={code}"
     # TODO: send email
     app.logger.info(f"Sending email to '{email}' with code '{code}'. Link: {link}")
 
