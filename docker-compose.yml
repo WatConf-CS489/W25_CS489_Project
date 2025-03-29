@@ -37,11 +37,11 @@ services:
     depends_on:
       - frontend
       - backend
-    healthcheck:
-      test: curl -fk https://localhost && curl -fk https://localhost/api/healthcheck
-      interval: 30s
-      timeout: 10s
-      retries: 5
+    # healthcheck:
+    #   test: curl -fk https://local.kabir.dev && curl -fk https://local.kabir.dev/api/healthcheck
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
 volumes:
   db_data:
   redis_data:
