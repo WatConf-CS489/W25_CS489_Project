@@ -42,6 +42,7 @@ export default function Page() {
 
   const postConfession = useCallback(async (content: string | null) => {
     setOpen(false);
+    setLoading(true);
     try {
       const sanitizedContent = sanitize(content);
       const response = await fetch(`${API_URL}/post`, {
