@@ -23,7 +23,7 @@ jobs:
       - name: Set up ssh
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.LIVE_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           echo "watconf.kabir.dev ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGlz6kMlk+/MJTtl0uYOElD3pk6MWCfURDaVfPvQzw1c" >> ~/.ssh/known_hosts
 

@@ -15,8 +15,6 @@ rp_id = get_base_url()
 rp_name = "WatConfessions"
 rp_origins = [f"https://{rp_id}"]
 
-app.logger.info(f"RP ID: {rp_id}")
-
 class RegisterStartRequest(BaseModel):
     username: str
 
