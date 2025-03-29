@@ -102,7 +102,6 @@ const Post = ({ post }: { post: PostType }) => {
         <Typography variant="body1">
           {moment.unix(post.time).fromNow()}
         </Typography>
-        {/* Voting */}
         <Box sx={{ flexGrow: 1 }} />
         <Typography variant="body1" sx={{ marginRight: "10px" }}>
           {post.likes} {post.likes === 1 ? "vote" : "votes"}
