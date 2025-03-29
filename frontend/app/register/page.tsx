@@ -30,8 +30,7 @@ export default function Page() {
     if (startResponse.ok) {
       setSuccess(true);
     } else {
-      const { error } = await startResponse.json();
-      setError(error);
+      setError("error");
     }
   };
 
@@ -95,7 +94,6 @@ export default function Page() {
                     onClose={() => setError(null)}
                   >
                     <Typography>Registration has failed.</Typography>
-                    <Typography>{error}</Typography>
                   </Alert>
                 </Snackbar>
               </>
