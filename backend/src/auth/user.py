@@ -40,6 +40,7 @@ class User(UserMixin, DBModel):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     is_banned: Mapped[bool] = mapped_column(Boolean, default=False)
     ticket: Mapped[str] = mapped_column(Text(), unique=True)
+    deleted_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     passkey_credentials: Mapped[List['PasskeyCredential']] = relationship(back_populates='user')
     posts: Mapped[List['Post']] = relationship("Post", back_populates="user")
@@ -48,6 +49,10 @@ class User(UserMixin, DBModel):
     def __repr__(self):
         return f'<User {self.username}>'
     
+    @property
+    def is_active(self) -> bool:
+        return not self.is_banned and self.deleted_at is None
+
     def set_password(self, password: str):
         """hashes and stores password"""
         self.password_hash = ph.hash(password)
