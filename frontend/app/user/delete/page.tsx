@@ -1,13 +1,12 @@
 "use client";
 
 import { API_URL } from "@/constants";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import React from "react";
 
 import ContentWrapper from "../../components/ContentWrapper";
 import PageHeader from "../../components/PageHeader";
 import { BoldText, MainContent } from "../../components/Utils";
-import sanitize from "@/utils/sanitize";
 
 import {
   Alert,
@@ -20,24 +19,47 @@ import {
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Page() {
   const [username, setUsername] = useState("");
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [disabled, setDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const response = await fetch(`${API_URL}/auth/delete-account`, {
       method: "POST",
     });
     if (response.ok) {
       router.push("/");
+    } else {
+      setError(true);
     }
   };
+
+  const fetchUsername = async () => {
+    const response = await fetch(`${API_URL}/profile`);
+    try {
+      if (!response.ok) {
+        throw new Error();
+      }
+      return response.json();
+    } catch {
+      setError(true);
+      return { username: "temp_fallback" };
+    }
+  };
+
+  const { data } = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchUsername,
+  });
 
   return (
     <>
@@ -74,11 +96,19 @@ export default function Page() {
                   variant="outlined"
                   placeholder="Enter your username to confirm"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    if (e.target.value === data?.username) {
+                      setDisabled(false);
+                    } else {
+                      setDisabled(true);
+                    }
+                  }}
                 />
                 <Button
                   type="submit"
                   loading={loading}
+                  disabled={disabled}
                   variant="contained"
                   color="error"
                 >
@@ -100,7 +130,7 @@ export default function Page() {
                       sx={{ width: "100%" }}
                       onClose={() => setError(false)}
                     >
-                      An error occurred.
+                      Failed to delete account.
                     </Alert>
                   ) : success ? (
                     <Alert
