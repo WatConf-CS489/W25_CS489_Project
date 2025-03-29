@@ -18,4 +18,7 @@ def logout():
 @login_required
 def profile():
     user = get_current_user()
-    return jsonify({"username": user.username}), 200
+    return jsonify({
+        "username": user.username,
+        "is_moderator": user.is_moderator
+        }), 200
