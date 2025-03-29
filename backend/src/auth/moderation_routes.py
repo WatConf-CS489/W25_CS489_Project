@@ -12,7 +12,7 @@ from src.auth.report import Report
 #     {"reporter_id": "uuid3", "reportee_id": "uuid4", "post_id": 17},
 # ]
 
-def moderator_required():
+def is_moderator():
     if not current_user.is_authenticated or not getattr(current_user, "is_moderator", False):
         return False
     return True
@@ -20,7 +20,7 @@ def moderator_required():
 @app.route("/moderation/reports", methods=["GET"])
 @login_required
 def get_reports():
-    if not moderator_required():
+    if not is_moderator():
         return jsonify({"error": "Moderator privileges required."}), 403
 
     reports = db.session.query(Report).all()
@@ -38,7 +38,7 @@ def get_reports():
 @app.route("/moderation/post-text", methods=["GET"])
 @login_required
 def get_post_text():
-    if not moderator_required():
+    if not is_moderator():
         return jsonify({"error": "Moderator privileges required."}), 403
 
     post_id = request.args.get("post_id")
@@ -55,7 +55,7 @@ def get_post_text():
 @login_required
 def remove_post():
     """Remove a post by ID"""
-    if not moderator_required():
+    if not is_moderator():
         return jsonify({"error": "Moderator privileges required."}), 403
 
     data = request.get_json()
@@ -73,7 +73,7 @@ def remove_post():
 @app.route("/moderation/ban-user", methods=["POST"])
 @login_required
 def ban_user():
-    if not moderator_required():
+    if not is_moderator():
         return jsonify({"error": "Moderator privileges required."}), 403
 
     data = request.get_json()
