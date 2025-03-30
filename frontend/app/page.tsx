@@ -36,16 +36,17 @@ export default function Page() {
           body: JSON.stringify({ username: santizedUsername }),
         });
         const { challenge_id, options } = await response.json();
-        const credential = await startAuthentication({
-          optionsJSON: JSON.parse(options),
-          useBrowserAutofill: username === null,
-        });
+        // const credential = await startAuthentication({
+        //   optionsJSON: JSON.parse(options),
+        //   useBrowserAutofill: username === null,
+        // });
         const finishResponse = await fetch(`${API_URL}/auth/login/finish`, {
           method: "POST",
           body: JSON.stringify({
-            credential: JSON.stringify(credential),
+            credential: "hi", // JSON.stringify(credential),
             challenge_id,
             remember,
+            username: santizedUsername,
           }),
         });
         const finishResponseJson = await finishResponse.json();

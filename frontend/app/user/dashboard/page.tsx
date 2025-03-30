@@ -12,15 +12,22 @@ import PageHeader from "@/components/PageHeader";
 import {
   Alert,
   CircularProgress,
+  FormControl,
   IconButton,
+  InputLabel,
   List,
   ListItem,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Snackbar,
   Typography,
 } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
-import ArrowUpward from "@mui/icons-material/ArrowUpward"
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FlagIcon from "@mui/icons-material/Flag";
+import { useRouter } from "next/navigation";
 
 const postSchema = yup.object({
   id: yup.string().required(),
@@ -36,7 +43,7 @@ const responseSchema = yup.object({
 
 type PostType = yup.InferType<typeof postSchema>;
 
-const Post = ({ post }: { post: PostType }) => {
+const Post = ({ post, router }: { post: PostType; router: any }) => {
   const ProfileImage = styled(IconButton)({
     color: "#000000",
     backgroundColor: "#d9d9d9",
@@ -59,9 +66,28 @@ const Post = ({ post }: { post: PostType }) => {
 
   const PostContent = styled(Box)({
     display: "flex",
+    flexDirection: "column",
     width: "60%",
     backgroundColor: "#ffffff",
     opacity: 0.9,
+    borderRadius: "10px",
+  });
+
+  const PostActions = styled(Box)({
+    display: "flex",
+    justifyContent: "space-between",
+    backgroundColor: "#ffffff",
+    opacity: 0.9,
+    marginLeft: "20px",
+    marginRight: "20px",
+    marginBottom: "20px",
+  });
+
+  const VotesBox = styled(Box)({
+    display: "flex",
+    flex: "none",
+    backgroundColor: "#787878",
+    alignItems: "center",
     borderRadius: "10px",
   });
 
@@ -102,24 +128,6 @@ const Post = ({ post }: { post: PostType }) => {
         <Typography variant="body1">
           {moment.unix(post.time).fromNow()}
         </Typography>
-        <Box sx={{ flexGrow: 1 }} />
-        <Typography variant="body1" sx={{ marginRight: "10px" }}>
-          {post.likes} {post.likes === 1 ? "vote" : "votes"}
-        </Typography>
-        <IconButton
-          sx={{
-            color: "#000000",
-            backgroundColor: "#d9d9d9",
-            "&:hover": {
-              backgroundColor: "#d9d9d9",
-            },
-          }}
-          onClick={() => {
-            toggleVoteMutation(post);
-          }}
-        >
-          <ArrowUpward sx={{ color: post.liked ? "yellow" : "#000", scale: 1.5 }} />
-        </IconButton>
       </PostMetadata>
       <PostContent>
         <Typography
@@ -129,13 +137,60 @@ const Post = ({ post }: { post: PostType }) => {
         >
           {post.content}
         </Typography>
+        <PostActions>
+          <VotesBox>
+            <IconButton
+              onClick={() => {
+                toggleVoteMutation(post);
+              }}
+            >
+              <FavoriteIcon
+                sx={{ color: post.liked ? "#fed34c" : "#ffffff" }}
+              />
+            </IconButton>
+            <Typography
+              variant="body1"
+              sx={{ marginRight: "10px", color: "#ffffff" }}
+            >
+              {post.likes}
+            </Typography>
+          </VotesBox>
+          <IconButton
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                sessionStorage.setItem(
+                  "reportDetails",
+                  JSON.stringify({
+                    content: post.content,
+                    time: post.time,
+                    id: post.id,
+                  })
+                );
+              }
+              router.push("/user/report");
+            }}
+          >
+            <FlagIcon sx={{ color: "#ff0000" }} />
+          </IconButton>
+        </PostActions>
       </PostContent>
     </ListItem>
   );
 };
 
 export default function Page() {
+  const router = useRouter();
   const [error, setError] = useState(false);
+  const [sortBy, setSortBy] = useState(0);
+  const [filterDate, setFilterDate] = useState(0);
+
+  const handleSortByChange = (event: SelectChangeEvent<number>) => {
+    setSortBy(Number(event.target.value));
+  };
+
+  const handleFilterDateChange = (event: SelectChangeEvent<number>) => {
+    setFilterDate(Number(event.target.value));
+  };
 
   const temp_fallback_posts: PostType[] = [
     {
@@ -183,6 +238,41 @@ export default function Page() {
     queryFn: fetchPosts,
   });
 
+  const SortBox = styled(Box)({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    marginTop: "20px",
+  });
+
+  const RoundedBox = styled(Box)({
+    borderRadius: "10px",
+    margin: "10px",
+  });
+
+  const filterAndSortPosts = (posts: PostType[]): PostType[] => {
+    // How many hours back can posts go while staying in filtering window?
+    const hoursMap: { [key: number]: number } = { 1: 24, 2: 168, 3: 720 };
+    const hoursWindow = hoursMap[filterDate];
+
+    if (hoursWindow) {
+      const cutoff = moment().subtract(hoursWindow, "hours");
+      posts = posts.filter((post) => moment.unix(post.time).isAfter(cutoff));
+    }
+
+    // Sort and return posts
+    return posts.sort((a, b) => {
+      if (sortBy === 0) {
+        // Latest first
+        return b.time - a.time;
+      } else {
+        // Most likes first
+        return b.likes - a.likes;
+      }
+    });
+  };
+
   return (
     <>
       <Box
@@ -190,11 +280,51 @@ export default function Page() {
       >
         <PageHeader hasPostButton={true} />
         <ContentWrapper>
+          <SortBox>
+            <RoundedBox>
+              <FormControl variant="filled">
+                <InputLabel id="sort-by-select-label">Sort by</InputLabel>
+                <Select
+                  labelId="sort-by-select-label"
+                  value={sortBy}
+                  onChange={handleSortByChange}
+                >
+                  <MenuItem value={0}>New</MenuItem>
+                  <MenuItem value={1}>Top</MenuItem>
+                </Select>
+              </FormControl>
+            </RoundedBox>
+            <RoundedBox>
+              <FormControl variant="filled">
+                <InputLabel id="filter-date-select-label">
+                  Date range
+                </InputLabel>
+                <Select
+                  labelId="filter-date-select-label"
+                  value={filterDate}
+                  onChange={handleFilterDateChange}
+                >
+                  <MenuItem value={0}>All time</MenuItem>
+                  <MenuItem value={1}>Today</MenuItem>
+                  <MenuItem value={2}>Last week</MenuItem>
+                  <MenuItem value={3}>Last month</MenuItem>
+                </Select>
+              </FormControl>
+            </RoundedBox>
+          </SortBox>
           <List sx={{ overflowY: "auto", paddingTop: "3vh", width: "100%" }}>
             {data && data.posts ? (
-              data.posts.map((post, index) => <Post key={index} post={post} />)
+              filterAndSortPosts(data.posts).map((post, index) => (
+                <Post key={index} post={post} router={router} />
+              ))
             ) : (
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                }}
+              >
                 <CircularProgress />
               </Box>
             )}

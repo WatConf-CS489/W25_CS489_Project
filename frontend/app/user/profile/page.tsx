@@ -50,6 +50,11 @@ export default function Page() {
     queryFn: fetchUsername,
   });
 
+  // Wait for username to render
+  if (!data?.username) {
+    return null;
+  }
+
   return (
     <>
       <Box
