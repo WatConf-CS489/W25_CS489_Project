@@ -1,16 +1,12 @@
 from flask import request, jsonify
 from flask_login import login_required, current_user
-from sqlalchemy import select, delete
+from sqlalchemy import select
+from datetime import datetime, timezone
 from src.base import app
 from src.extensions import db
 from src.auth.user import User
 from src.posts.post import Post
 from src.auth.report import Report
-
-# REPORTS = [
-#     {"reporter_id": "uuid1", "reportee_id": "uuid2", "post_id": 12},
-#     {"reporter_id": "uuid3", "reportee_id": "uuid4", "post_id": 17},
-# ]
 
 def is_moderator():
     if not current_user.is_authenticated or not getattr(current_user, "is_moderator", False):
@@ -45,16 +41,18 @@ def get_post_text():
     if not post_id:
         return jsonify({"error": "Post ID required."}), 400
 
-    post = db.session.execute(select(Post).where(Post.id == int(post_id))).scalar_one_or_none()
-    if post is None:
-        return jsonify({"error": "Post not found."}), 404
+    post = db.session.execute(
+        select(Post).where(Post.id == post_id)
+    ).scalar_one_or_none()
+
+    if not post or post.is_deleted(post):
+        return jsonify({"error": "Post not found or already deleted."}), 404
 
     return jsonify({"content": post.content})
 
 @app.route("/moderation/remove-post", methods=["POST"])
 @login_required
 def remove_post():
-    """Remove a post by ID"""
     if not is_moderator():
         return jsonify({"error": "Moderator privileges required."}), 403
 
@@ -63,10 +61,15 @@ def remove_post():
     if not post_id:
         return jsonify({"error": "Post ID required."}), 400
 
-    result = db.session.execute(delete(Post).where(Post.id == int(post_id)))
-    db.session.commit()
-    if result.rowcount == 0:
+    post = db.session.execute(
+        select(Post).where(Post.id == post_id)
+    ).scalar_one_or_none()
+
+    if not post or post.is_deleted(post):
         return jsonify({"error": "Post not found or already deleted."}), 404
+
+    post.deleted_at = datetime.now(timezone.utc)
+    db.session.commit()
 
     return jsonify({"message": "Post deleted successfully."})
 
