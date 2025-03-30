@@ -3,6 +3,7 @@ from src.base import app
 from src.extensions import db
 from src.auth.user import get_current_user
 from src.posts.post import Post
+from src.posts.post_ai import flagged_categories
 from flask import request, jsonify
 from html import escape
 
@@ -26,6 +27,10 @@ def create_post():
         return jsonify({'error': 'Missing required fields: content'}), 400
 
     escaped_content = escape_html(content)
+
+    post_flags = flagged_categories(escaped_content)
+    if len(post_flags) > 0:
+        return jsonify({'error': 'Post content flagged as dangerous', 'flags': post_flags}), 400
 
     try:
         new_post = Post(
