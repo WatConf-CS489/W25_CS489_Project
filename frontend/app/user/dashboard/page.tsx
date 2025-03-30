@@ -28,6 +28,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FlagIcon from "@mui/icons-material/Flag";
 import { useRouter } from "next/navigation";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 const postSchema = yup.object({
   id: yup.string().required(),
@@ -43,7 +44,14 @@ const responseSchema = yup.object({
 
 type PostType = yup.InferType<typeof postSchema>;
 
-const Post = ({ post, router }: { post: PostType; router: any }) => {
+// Router as prop is bad practice but I get next issues otherwise so it is what it is
+const Post = ({
+  post,
+  router,
+}: {
+  post: PostType;
+  router: AppRouterInstance;
+}) => {
   const ProfileImage = styled(IconButton)({
     color: "#000000",
     backgroundColor: "#d9d9d9",
