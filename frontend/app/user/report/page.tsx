@@ -62,28 +62,34 @@ export default function Page() {
     }
   }, [router]);
 
-  const reportPost = useCallback(async (content: string | null) => {
-    setOpen(false);
-    setLoading(true);
-    try {
-      const sanitizedContent = sanitize(content);
-      const response = await fetch(`${API_URL}/report`, {
-        method: "POST",
-        body: JSON.stringify({ postId: postId, explanation: sanitizedContent }),
-      });
-      if (response.ok) {
-        setSuccess(true);
-        setLoading(false);
-        setContent("");
-      } else {
+  const reportPost = useCallback(
+    async (content: string | null) => {
+      setOpen(false);
+      setLoading(true);
+      try {
+        const sanitizedContent = sanitize(content);
+        const response = await fetch(`${API_URL}/report`, {
+          method: "POST",
+          body: JSON.stringify({
+            postId: postId,
+            explanation: sanitizedContent,
+          }),
+        });
+        if (response.ok) {
+          setSuccess(true);
+          setLoading(false);
+          setContent("");
+        } else {
+          setError(true);
+          setLoading(false);
+        }
+      } catch {
         setError(true);
         setLoading(false);
       }
-    } catch {
-      setError(true);
-      setLoading(false);
-    }
-  }, []);
+    },
+    [postId]
+  );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
