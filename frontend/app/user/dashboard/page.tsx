@@ -21,6 +21,7 @@ import {
   Select,
   SelectChangeEvent,
   Snackbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Box, styled } from "@mui/system";
@@ -147,15 +148,17 @@ const Post = ({
         </Typography>
         <PostActions>
           <VotesBox>
-            <IconButton
-              onClick={() => {
-                toggleVoteMutation(post);
-              }}
-            >
-              <FavoriteIcon
-                sx={{ color: post.liked ? "#fed34c" : "#ffffff" }}
-              />
-            </IconButton>
+            <Tooltip title="Like" arrow>
+              <IconButton
+                onClick={() => {
+                  toggleVoteMutation(post);
+                }}
+              >
+                <FavoriteIcon
+                  sx={{ color: post.liked ? "#fed34c" : "#ffffff" }}
+                />
+              </IconButton>
+            </Tooltip>
             <Typography
               variant="body1"
               sx={{ marginRight: "10px", color: "#ffffff" }}
@@ -163,23 +166,25 @@ const Post = ({
               {post.likes}
             </Typography>
           </VotesBox>
-          <IconButton
-            onClick={() => {
-              if (typeof window !== "undefined") {
-                sessionStorage.setItem(
-                  "reportDetails",
-                  JSON.stringify({
-                    content: post.content,
-                    time: post.time,
-                    id: post.id,
-                  })
-                );
-              }
-              router.push("/user/report");
-            }}
-          >
-            <FlagIcon sx={{ color: "#ff0000" }} />
-          </IconButton>
+          <Tooltip title="Report" arrow>
+            <IconButton
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  sessionStorage.setItem(
+                    "reportDetails",
+                    JSON.stringify({
+                      content: post.content,
+                      time: post.time,
+                      id: post.id,
+                    })
+                  );
+                }
+                router.push("/user/report");
+              }}
+            >
+              <FlagIcon sx={{ color: "#ff0000" }} />
+            </IconButton>
+          </Tooltip>
         </PostActions>
       </PostContent>
     </ListItem>

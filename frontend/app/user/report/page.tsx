@@ -165,7 +165,7 @@ export default function Page() {
                     className="bg-white rounded-lg shadow-xl px-10 py-12"
                     spacing={1}
                   >
-                    <Typography align="center">
+                    <Typography align="center" component="div">
                       <BoldText>
                         Tell us in a few words what is wrong about this
                         confession.
