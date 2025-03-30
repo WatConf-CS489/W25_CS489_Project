@@ -19,8 +19,8 @@ BEGIN
     ELSE
         INSERT INTO posts (content, created_at, user_id, vote_count)
         VALUES 
-            ('I love the French Vanilla at C&D!', now() - INTERVAL '1 year', user1_id, 3),
-            ('I might drop out any second.', now() - INTERVAL '1 month', user2_id, 5),
+            ('I love the French Vanilla at C&D!', now(), user1_id, 3),
+            ('I might drop out any second.', now(), user2_id, 5),
             ('Who else is struggling with DB setup?', now(), user1_id, 2)
         ON CONFLICT DO NOTHING;
 

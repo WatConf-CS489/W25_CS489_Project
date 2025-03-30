@@ -22,7 +22,6 @@ class LoginFinishRequest(BaseModel):
     credential: str
     challenge_id: str
     remember: bool
-    username: str
 
 @app.route("/auth/login/start", methods=["POST"])
 def login_start():
@@ -65,32 +64,32 @@ def login_start():
 def login_finish():
     body = LoginFinishRequest.model_validate_json(request.data)
 
-    # credential = parse_authentication_credential_json(body.credential)
+    credential = parse_authentication_credential_json(body.credential)
 
-    # db_credential = db.session.execute(
-    #     select(PasskeyCredential).where(PasskeyCredential.credential_id == credential.raw_id.hex())
-    # ).scalar_one()
-
-    user = db.session.execute(
-        select(User).where(User.username == body.username)
+    db_credential = db.session.execute(
+        select(PasskeyCredential).where(PasskeyCredential.credential_id == credential.raw_id.hex())
     ).scalar_one()
 
-    # try:
-        # challenge = r.get(f"login_challenge:{body.challenge_id}")
-        # if not isinstance(challenge, bytes):
-        #     return jsonify({"error": "Challenge not found"}), 400
-        # verification = verify_authentication_response(
-        #     credential=credential,
-        #     expected_challenge=challenge,
-        #     expected_rp_id=rp_id,
-        #     expected_origin=rp_origins,
-        #     credential_public_key=db_credential.public_key,
-        #     credential_current_sign_count=db_credential.sign_count,
-        # )
-    # except Exception as err:
-    #     return jsonify({"verified": False, "status": 400}), 400
+    user = db.session.execute(
+        select(User).where(User.id == db_credential.user_id)
+    ).scalar_one()
 
-    # db_credential.sign_count = verification.new_sign_count
+    try:
+        challenge = r.get(f"login_challenge:{body.challenge_id}")
+        if not isinstance(challenge, bytes):
+            return jsonify({"error": "Challenge not found"}), 400
+        verification = verify_authentication_response(
+            credential=credential,
+            expected_challenge=challenge,
+            expected_rp_id=rp_id,
+            expected_origin=rp_origins,
+            credential_public_key=db_credential.public_key,
+            credential_current_sign_count=db_credential.sign_count,
+        )
+    except Exception as err:
+        return jsonify({"verified": False, "status": 400}), 400
+
+    db_credential.sign_count = verification.new_sign_count
 
     if not login_user(user=user, remember=True):
         return jsonify({"verified": False, "status": 400}), 400

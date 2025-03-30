@@ -46,7 +46,6 @@ export default function Page() {
             credential: JSON.stringify(credential),
             challenge_id,
             remember,
-            username: santizedUsername,
           }),
         });
         const finishResponseJson = await finishResponse.json();
