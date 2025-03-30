@@ -10,6 +10,7 @@ dependencies = [
     "flask-sqlalchemy>=3.1.1",
     "gunicorn>=23.0.0",
     "inotify>=0.2.10",
+    "openai>=1.69.0",
     "psycopg2-binary>=2.9.10",
     "pycryptodomex==3.22.0", # pinned since we use a private API
     "pydantic>=2.10.6",
