@@ -4,7 +4,7 @@ from src.base import app
 from src.extensions import db, r
 from src.auth.user import PasskeyCredential, User
 from sqlalchemy import select
-from flask import request, abort, jsonify
+from flask import request, abort, jsonify, make_response
 from flask_login import login_user
 from webauthn import generate_authentication_options, options_to_json
 from webauthn.authentication.verify_authentication_response import verify_authentication_response, parse_authentication_credential_json
@@ -93,5 +93,14 @@ def login_finish():
 
     if not login_user(user=user, remember=body.remember):
         return jsonify({"verified": False, "status": 400}), 400
+    response = make_response(
+        jsonify({"verified": True}),
+        200,
+    )
 
-    return jsonify({"verified": True}), 200
+    if user.is_moderator:
+        response.set_cookie("is_moderator", "true", httponly=True, secure=True)
+    else:
+        response.set_cookie("is_moderator", "false", httponly=True, secure=True)
+    
+    return response
