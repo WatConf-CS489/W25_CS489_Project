@@ -74,12 +74,8 @@ seed:
 
 .PHONY: promote
 promote:
-	@echo "Promoting user '$(USER)' to moderator..."
-	@sed "s/{{USERNAME}}/$(USER)/g" backend/src/mod_seed.sql > /tmp/tmp_promote.sql; \
-	set -o allexport && source backend/envs/common.env && set +o allexport; \
-	docker cp /tmp/tmp_promote.sql db:/promote.sql; \
-	docker exec -it db psql -U $$POSTGRES_USER -d $$POSTGRES_DB -f /promote.sql; \
-	rm /tmp/tmp_promote.sql
+	@set -o allexport && source backend/envs/common.env && set +o allexport; \
+	sed "s/{{USERNAME}}/$(USER)/g" backend/src/mod_seed.sql | docker exec -i db psql -U $$POSTGRES_USER -d $$POSTGRES_DB -f -
 
 crypt/unlocked:
 	git crypt unlock crypt/crypt.key
