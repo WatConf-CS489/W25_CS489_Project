@@ -139,6 +139,7 @@ export default function Page() {
                       onChange={(e) => setContent(e.target.value)}
                     />
                     <Button
+                      disabled={content.length < 8}
                       type="submit"
                       loading={loading}
                       variant="contained"

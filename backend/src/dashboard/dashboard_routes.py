@@ -14,6 +14,7 @@ class PostObject(BaseModel):
     content: str
     likes: int
     liked: bool
+    reported: bool
 
 @app.route("/readAll", methods=["GET"])
 def read_all_posts():
@@ -24,13 +25,15 @@ def read_all_posts():
             .order_by(desc(Post.created_at))
         ).scalars().all()
 
+        user_id = get_current_user().id
         posts_array = [
             PostObject(
                 id=str(post.id),
                 time=int(post.created_at.timestamp()),
                 content=post.content,
                 likes=len(post.votes),
-                liked=any(vote.user_id == get_current_user().id for vote in post.votes),
+                liked=any(vote.user_id == user_id for vote in post.votes),
+                reported=any(report.reporter_id == user_id for report in post.reports),
             ).model_dump()
             for post in all_posts
         ]
