@@ -41,6 +41,7 @@ const postSchema = yup.object({
   liked: yup.boolean().required(),
   likes: yup.number().required(),
   content: yup.string().required(),
+  reported: yup.bool().required(),
 });
 
 const responseSchema = yup.object({
@@ -224,6 +225,8 @@ const Post = ({
                   <DeleteIcon sx={{ color: "#ff0000" }} />
                 </IconButton>
               </Tooltip>
+            ) : post.reported ? (
+              <Box />
             ) : (
               <Tooltip title="Report" arrow>
                 <IconButton
@@ -340,6 +343,7 @@ export default function Page() {
       likes: 1017,
       content:
         "This course provides an introduction to building secure software applications. It examines the software development life cycle and teaches what developers can do in each step to make their software more secure.  It also will cover common vulnerabilities that exist and how developers can avoid or safeguard against them. Students completing this course should be able to build and deploy software with fewer security issues. Intended audience: Fourth year CS students (CS 45X)",
+      reported: false,
     },
     {
       id: "2",
@@ -348,6 +352,7 @@ export default function Page() {
       likes: 5796,
       content:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      reported: false,
     },
     {
       id: "3",
@@ -356,6 +361,7 @@ export default function Page() {
       likes: 0,
       content:
         "A button is a fastener that joins two pieces of fabric together by slipping through a loop or by sliding through a buttonhole. In modern clothing and fashion design, buttons are commonly made of plastic but also may be made of metal, wood, or seashell. Buttons can also be used on containers such as wallets and bags.",
+      reported: false,
     },
   ];
 
