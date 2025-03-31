@@ -17,6 +17,7 @@ dependencies = [
     "pytest>=8.3.5",
     "pythonfuzz>=1.0.11",
     "redis>=5.2.1",
+    "sendgrid>=6.11.0",
     "sqlalchemy>=2.0.38",
     "types-flask-cors>=5.0.0.20240902",
     "webauthn>=2.5.1",
