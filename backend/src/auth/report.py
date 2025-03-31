@@ -16,7 +16,7 @@ class Report(DBModel):
 
     reporter: Mapped['User'] = relationship("User", foreign_keys=[reporter_id], backref="reports_made")
     reportee: Mapped['User'] = relationship("User", foreign_keys=[reportee_id], backref="reports_received")
-    post: Mapped['Post'] = relationship("Post", backref="reports")
+    post: Mapped['Post'] = relationship("Post", back_populates="reports")
 
     def __repr__(self):
         return f"<Report {self.id} by {self.reporter_id} on {self.post_id}>"
