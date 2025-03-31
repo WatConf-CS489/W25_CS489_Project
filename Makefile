@@ -76,6 +76,11 @@ promote:
 	@set -o allexport && source backend/envs/common.env && set +o allexport; \
 	sed "s/{{USERNAME}}/$(USER)/g" backend/src/mod_seed.sql | docker exec -i db psql -U $$POSTGRES_USER -d $$POSTGRES_DB -f -
 
+.PHONY: psql
+psql:
+	@set -o allexport && source backend/envs/common.env && set +o allexport; \
+	docker exec -it db psql -U $$POSTGRES_USER -d $$POSTGRES_DB
+
 crypt/unlocked:
 	git crypt unlock crypt/crypt.key
 	touch crypt/unlocked
