@@ -19,14 +19,20 @@ def get_reports():
     if not is_moderator():
         return jsonify({"error": "Moderator privileges required."}), 403
 
-    reports = db.session.query(Report).all()
+    reports = db.session.query(Report).filter(Report.resolved_at.is_(None)).all()
 
     return jsonify([
         {
             "id": report.id,
             "reporter_id": str(report.reporter_id),
             "reportee_id": str(report.reportee_id),
-            "post_id": report.post_id
+            "post_id": report.post_id,
+            "reason": report.reason,
+            "post_content": (
+                    db.session.query(Post.content)
+                    .filter(Post.id == report.post_id, Post.deleted_at.is_(None))
+                    .scalar() or "Post not found or deleted."
+            )
         }
         for report in reports
     ])
@@ -45,7 +51,7 @@ def get_post_text():
         select(Post).where(Post.id == post_id)
     ).scalar_one_or_none()
 
-    if not post or post.is_deleted(post):
+    if not post or post.is_deleted:
         return jsonify({"error": "Post not found or already deleted."}), 404
 
     return jsonify({"content": post.content})
@@ -65,13 +71,35 @@ def remove_post():
         select(Post).where(Post.id == post_id)
     ).scalar_one_or_none()
 
-    if not post or post.is_deleted(post):
+    if not post or post.is_deleted:
         return jsonify({"error": "Post not found or already deleted."}), 404
 
     post.deleted_at = datetime.now(timezone.utc)
     db.session.commit()
 
     return jsonify({"message": "Post deleted successfully."})
+
+@app.route("/moderation/resolve-report", methods=["POST"])
+@login_required
+def resolve_report():
+    if not is_moderator():
+        return jsonify({"error": "Moderator privileges required."}), 403
+
+    data = request.get_json()
+    report_id = data.get("report_id")
+    if not report_id:
+        return jsonify({"error": "Report ID required."}), 400
+
+    report = db.session.execute(
+        select(Report).where(Report.id == report_id)
+    ).scalar_one_or_none()
+    if not report:
+        return jsonify({"error": "Report not found."}), 404
+
+    report.resolved_at = datetime.now(timezone.utc)
+    db.session.commit()
+
+    return jsonify({"message": "Report resolved successfully."})
 
 @app.route("/moderation/ban-user", methods=["POST"])
 @login_required

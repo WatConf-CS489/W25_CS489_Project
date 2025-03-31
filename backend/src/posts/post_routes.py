@@ -6,6 +6,8 @@ from src.posts.post import Post
 from src.posts.post_ai import flagged_categories
 from flask import request, jsonify
 from html import escape
+from sqlalchemy import select, func
+from datetime import datetime, timedelta
 
 class CreatePostRequest(BaseModel):
     content: str
@@ -25,7 +27,18 @@ def create_post():
 
     if not content:
         return jsonify({'error': 'Missing required fields: content'}), 400
+    
+    #rate limit check: max 10 posts in 24 hours
+    user_id = get_current_user().id
+    since = datetime.now() - timedelta(hours=24)
 
+    post_count = db.session.query(func.count(Post.id))\
+        .filter(Post.user_id == user_id)\
+        .filter(Post.created_at >= since)\
+        .scalar()
+    if post_count >= 10:
+        return jsonify({'error': 'Rate limit exceeded'}), 429
+    
     escaped_content = escape_html(content)
 
     post_flags = flagged_categories(escaped_content)
@@ -49,6 +62,7 @@ def create_post():
                 'user_id': new_post.user_id
             }
         }), 201
-    except Exception as err:
+
+    except:
         db.session.rollback()
         return jsonify({'error': 'Error occurred creating post'}), 500
