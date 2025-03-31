@@ -41,7 +41,7 @@ export default function Page() {
           minHeight: "100vh",
         }}
       >
-        <PageHeader hasPostButton={true} />
+        <PageHeader hasPostButton={true} isMod={false} />
         <ContentWrapper>
           <Typography variant="h3" marginTop="45px" marginBottom="40px">
             <BoldText>Contact us</BoldText>
