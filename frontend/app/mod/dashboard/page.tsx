@@ -145,7 +145,7 @@ export default function Page() {
         <PageHeader hasPostButton={true} isMod={true} />
         <ContentWrapper>
           <HeaderBox>
-            <Typography variant="h6" component="div">
+            <Typography variant="h3" component="div">
               <BoldText>Report dashboard</BoldText>
             </Typography>
           </HeaderBox>

@@ -36,6 +36,7 @@ export default function Page() {
   const [content, setContent] = useState("");
   const [open, setOpen] = useState(false);
 
+  const [submit, setSubmit] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -53,6 +54,7 @@ export default function Page() {
         setSuccess(true);
         setLoading(false);
         setContent("");
+        setSubmit(true);
       } else {
         setError(true);
         setLoading(false);
@@ -84,7 +86,7 @@ export default function Page() {
             <BoldText>Post</BoldText>
           </Typography>
           <MainContent>
-            {success ? (
+            {submit ? (
               <>
                 <Typography variant="h6" align="center" marginTop="30px">
                   <BoldText>Thank you!</BoldText>
