@@ -1,7 +1,7 @@
 "use client";
 
-import { API_URL } from "@/constants";
-import { Container, Divider, Link, Stack, Typography } from "@mui/material";
+import { API_URL, TERMS_AND_CONDITIONS } from "@/constants";
+import { Box, Button, Container, Divider, Link, Modal, Stack, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
@@ -52,7 +52,21 @@ async function blind(ticket: string) {
   };
 }
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "30%",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  outline: "none",
+  p: 4,
+};
+
 export default function Page() {
+  const [agreed, setAgreed] = useState(false);
+
   return (
     <Container className="h-screen flex flex-col justify-center">
       <Typography
@@ -68,16 +82,44 @@ export default function Page() {
       >
         WATConfessions
       </Typography>
-      <Container maxWidth="xs" sx={{ marginTop: 10 }}>
-        <Stack
-          className="bg-white rounded-lg shadow-xl px-10 py-12"
-          spacing={1}
-        >
-          <Suspense fallback={<Typography>Loading...</Typography>}>
-            <Verifier />
-          </Suspense>
+      <Modal open={!agreed} disableEnforceFocus>
+        <Stack sx={style} spacing={1}>
+          <Typography align="center" variant="h4">
+            Terms of Service
+          </Typography>
+          <Box
+            sx={{
+              overflowY: "scroll",
+              height: "500px",
+              backgroundColor: "#ECECEC",
+              whiteSpace: "pre-wrap",
+              paddingX: 2,
+            }}
+          >
+            {TERMS_AND_CONDITIONS}
+          </Box>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ backgroundColor: "#3A3A3A" }}
+            onClick={() => setAgreed(true)}
+          >
+            I agree
+          </Button>
         </Stack>
-      </Container>
+      </Modal>
+      {agreed ? (
+        <Container maxWidth="xs" sx={{ marginTop: 10 }}>
+          <Stack
+            className="bg-white rounded-lg shadow-xl px-10 py-12"
+            spacing={1}
+          >
+            <Suspense fallback={<Typography>Loading...</Typography>}>
+              <Verifier />
+            </Suspense>
+          </Stack>
+        </Container>
+      ) : null}
     </Container>
   );
 }

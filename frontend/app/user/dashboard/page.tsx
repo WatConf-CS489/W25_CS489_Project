@@ -154,9 +154,10 @@ const Post = ({
     try {
       const response = await fetch(`${API_URL}/moderation/remove-post`, {
         method: "POST",
-        body: JSON.stringify({
-          postId: postId,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ post_id: postId }),
       });
       if (response.ok) {
         setSuccess(true);
