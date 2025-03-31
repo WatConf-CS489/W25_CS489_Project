@@ -71,8 +71,8 @@ export default function Page() {
         const response = await fetch(`${API_URL}/report`, {
           method: "POST",
           body: JSON.stringify({
-            postId: postId,
-            explanation: sanitizedContent,
+            post_id: postId,
+            reason: sanitizedContent,
           }),
         });
         if (response.ok) {
