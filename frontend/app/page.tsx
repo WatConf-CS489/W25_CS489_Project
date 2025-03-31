@@ -66,14 +66,6 @@ export default function Page() {
     [router, remember]
   );
 
-  useEffect(
-    () => {
-      submit(null);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
