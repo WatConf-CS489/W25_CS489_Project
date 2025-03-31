@@ -1,7 +1,16 @@
 "use client";
 
 import { API_URL, TERMS_AND_CONDITIONS } from "@/constants";
-import { Box, Button, Container, Divider, Link, Modal, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Divider,
+  Link,
+  Modal,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
@@ -127,9 +136,13 @@ export default function Page() {
 function Verifier() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [code, setCode] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
-  const code = searchParams.get("code") || "";
+
+  useEffect(() => {
+    setCode(searchParams.get("code") || "");
+  }, [searchParams]);
 
   useEffect(() => {
     async function verify() {
@@ -157,7 +170,11 @@ function Verifier() {
         }).toString()}`
       );
     }
-    verify();
+    if (code === "") {
+      setError("Error: No code");
+    } else if (code) {
+      verify();
+    }
   }, [code, router]);
 
   return (
