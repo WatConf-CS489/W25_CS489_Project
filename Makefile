@@ -58,6 +58,7 @@ ifeq ($(OS),Windows_NT)
 COMPOSE_SEPARATOR = ;
 else
 COMPOSE_SEPARATOR = :
+SHELL = /bin/bash
 endif
 
 ifneq ($(PROD),)
