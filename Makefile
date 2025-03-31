@@ -68,9 +68,13 @@ endif
 
 .PHONY: seed
 seed:
-	@set -o allexport && source backend/envs/dev.env && set +o allexport; \
-	docker cp backend/src/seed.sql db:/seed.sql; \
-	docker exec -it db psql -U $$POSTGRES_USER -d $$POSTGRES_DB -f /seed.sql
+	@set -o allexport && source backend/envs/common.env && set +o allexport; \
+	cat backend/src/seed.sql | docker exec -i db psql -U $$POSTGRES_USER -d $$POSTGRES_DB
+
+.PHONY: promote
+promote:
+	@set -o allexport && source backend/envs/common.env && set +o allexport; \
+	sed "s/{{USERNAME}}/$(USER)/g" backend/src/mod_seed.sql | docker exec -i db psql -U $$POSTGRES_USER -d $$POSTGRES_DB -f -
 
 crypt/unlocked:
 	git crypt unlock crypt/crypt.key
