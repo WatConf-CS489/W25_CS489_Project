@@ -49,6 +49,7 @@ def create_post():
                 'user_id': new_post.user_id
             }
         }), 201
-    except Exception as err:
+
+    except:
         db.session.rollback()
         return jsonify({'error': 'Error occurred creating post'}), 500
