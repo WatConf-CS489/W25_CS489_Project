@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import re
 import uuid
 from flask import Response, jsonify, request
 from pydantic import BaseModel
@@ -7,6 +8,8 @@ from src.auth.ticket import get_public_key_pem, sign_blinded_ticket
 from src.envs import get_base_url
 from src.extensions import db
 from src.base import DBModel, app
+from src.email import sg_client
+from sendgrid import Mail
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import UUID, String, Text, func
 
@@ -21,29 +24,34 @@ class EmailAddress(DBModel):
     verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
-def validate_email(email: str):
-    components = email.split("@")
+def sanitize_email(email: str) -> str:
+    lowered = email.lower()
+    regex = r"^([a-z0-9]+)(?:\+[a-z0-9]*)?@uwaterloo.ca$"
 
-    if len(components) != 2:
-        raise ValueError("Email must have exactly one '@' symbol")
-    
-    [prefix, domain] = components
+    if not (match := re.match(regex, lowered)):
+        raise ValueError("Email must be a valid address of the form '[a-z0-9]+@uwaterloo.ca'")
 
-    if domain != "uwaterloo.ca":
-        raise ValueError("Email must end with '@uwaterloo.ca'")
-    
-    if len(prefix) < 2:
-        raise ValueError("Email must be at least 2 characters long")
-
-    if prefix.find(".") != -1:
-        raise ValueError("Email must not contain '.'. Please use your WatIAM username.")
+    first_part = match.group(1)
+    return f"{first_part}@uwaterloo.ca"
 
 
 def send_email_code(email: str, code: str):
     base = get_base_url()
     link = f"https://{base}/register/verify?code={code}"
-    # TODO: send email
-    app.logger.info(f"Sending email to '{email}' with code '{code}'. Link: {link}")
+
+    if not email.endswith("+frfr@uwaterloo.ca"):
+        app.logger.info(f"Sending email to '{email}' with code '{code}'. Link: {link}")
+        return
+
+    app.logger.info(f"Sending email (FOR REAL) to '{email}' with code '{code}'. Link: {link}")
+    response = sg_client.send(Mail(
+        from_email="mail@watconf.kabir.dev",
+        to_emails=email,
+        subject="Your Waterloo Confessions verification code",
+        plain_text_content="Please verify your email address by clicking the link below:\n\n" + link,
+        html_content=f"<strong>Please verify your email address by clicking the link below:</strong><br><a href='{link}'>{link}</a>"
+    ))
+    app.logger.info(f"SendGrid response for {email}: {response}")
 
 
 class SendEmailRequest(BaseModel):
@@ -52,21 +60,23 @@ class SendEmailRequest(BaseModel):
 @app.route("/auth/verify/send", methods=["POST"])
 def handler_send_email():
     body = SendEmailRequest.model_validate_json( request.data)
+    raw_email = body.email
 
     try:
-        validate_email(body.email)
+        sanitized_email = sanitize_email(raw_email)
     except ValueError as e:
         return {}, 400
     
     email = db.session.execute(
-        select(EmailAddress).where(EmailAddress.email == body.email)
+        select(EmailAddress).where(EmailAddress.email == sanitized_email)
     ).scalar_one_or_none()
 
     if email is None:
-        email = EmailAddress(email=body.email, code=str(uuid.uuid4()))
+        email = EmailAddress(email=sanitized_email, code=str(uuid.uuid4()))
         db.session.add(email)
         db.session.commit()
-        send_email_code(email.email, email.code)
+        # send to the original (unsanitized) email address, including any +... component
+        send_email_code(raw_email, email.code)
     else:
         # don't error out, as that would leak whether the email is in the database
         pass
