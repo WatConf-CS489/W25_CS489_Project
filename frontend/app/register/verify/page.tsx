@@ -142,7 +142,7 @@ function Verifier() {
 
   useEffect(() => {
     setCode(searchParams.get("code") || "");
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     async function verify() {
@@ -175,7 +175,7 @@ function Verifier() {
     } else if (code) {
       verify();
     }
-  }, [code]);
+  }, [code, router]);
 
   return (
     <>
