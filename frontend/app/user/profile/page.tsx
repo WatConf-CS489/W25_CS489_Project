@@ -3,34 +3,18 @@
 import { API_URL } from "@/constants";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 
 import ContentWrapper from "../../components/ContentWrapper";
 import PageHeader from "../../components/PageHeader";
+import LogoutButton from "@/components/LogoutButton";
 import { BoldText, MainContent } from "../../components/Utils";
 
-import { Alert, Button, Divider, Snackbar, Typography } from "@mui/material";
+import { Alert, Divider, Snackbar, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import Link from "next/link";
 
 export default function Page() {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  const router = useRouter();
-
-  async function logout() {
-    setLoading(true);
-    const response = await fetch(`${API_URL}/auth/logout`, {
-      method: "POST",
-    });
-    if (response.ok) {
-      router.push("/");
-    } else {
-      setError(true);
-      setLoading(false);
-    }
-  }
 
   const fetchUsername = async () => {
     const response = await fetch(`${API_URL}/profile`);
@@ -65,7 +49,7 @@ export default function Page() {
           minHeight: "100vh",
         }}
       >
-        <PageHeader hasPostButton={true} />
+        <PageHeader hasPostButton={true} isMod={false} />
         <ContentWrapper>
           <Typography variant="h3" marginTop="45px" marginBottom="40px">
             <BoldText>User homepage</BoldText>
@@ -94,20 +78,7 @@ export default function Page() {
               </Typography>
               <BoldText>{data?.username ?? ""}</BoldText>
             </Box>
-            <Button
-              type="submit"
-              loading={loading}
-              variant="contained"
-              onClick={logout}
-              sx={{
-                backgroundColor: "#3A3A3A",
-                color: "#FFFFFF",
-                width: "50%",
-                alignSelf: "center",
-              }}
-            >
-              Log out
-            </Button>
+            <LogoutButton />
             <Snackbar
               open={error}
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
