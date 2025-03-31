@@ -20,6 +20,7 @@ class Post(DBModel):
     vote_count: Mapped[int] = mapped_column(Integer, default=0)
     report_count: Mapped[int] = mapped_column(Integer, default=0)
     deleted_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
     user: Mapped['User'] = relationship("User", back_populates="posts")
     votes: Mapped[list['Vote']] = relationship("Vote", back_populates="post")
     reports: Mapped[list['Report']] = relationship("Report", back_populates="post")

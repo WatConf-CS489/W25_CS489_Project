@@ -14,8 +14,6 @@ class PostObject(BaseModel):
     content: str
     likes: int
     liked: bool
-    reports: int
-    reported: bool
 
 @app.route("/readAll", methods=["GET"])
 def read_all_posts():
@@ -34,8 +32,6 @@ def read_all_posts():
                 content=post.content,
                 likes=len(post.votes),
                 liked=any(vote.user_id == get_current_user().id for vote in post.votes),
-                reports=len(post.reports),
-                reported=any(report.reporter_id == get_current_user().id for report in post.reports)
             ).model_dump()
             for post in all_posts
         ]
@@ -82,30 +78,30 @@ class ReportPostRequest(BaseModel):
 def report_post():
     body = ReportPostRequest.model_validate_json(request.data)
 
-    reporter_id = get_current_user().id
-    post_to_report = db.session.get(Post, body.post_id)
-
-    if not post_to_report:
-        return jsonify({"error": "Post not found"}), 404
-
-    reportee_id = post_to_report.user_id
-
-    already_reported = db.session.scalars(
-        select(Report).where(and_(Report.reporter_id == reporter_id, Report.post_id == body.post_id))
-    ).one_or_none()
-
-    if already_reported:
-        return jsonify({"error": "You have already reported this post"}), 400
-
-    # Create a new report and commit it to the database
     try:
-        new_report = Report(
-            reporter_id=reporter_id,
-            reportee_id=reportee_id,
-            post_id=body.post_id,
-            reason=body.reason,
+        reporter_id = get_current_user().id
+        post_to_report = db.session.get(Post, body.post_id)
+
+        if not post_to_report:
+            return jsonify({"error": "Post not found"}), 404
+
+        reportee_id = post_to_report.user_id
+
+        already_reported = db.session.scalars(
+            select(Report).where(and_(Report.reporter_id == reporter_id, Report.post_id == body.post_id))
+        ).one_or_none()
+
+        if already_reported:
+            return jsonify({"error": "You have already reported this post"}), 400
+
+        db.session.execute(
+            insert(Report).values(
+                reporter_id=reporter_id,
+                reportee_id=reportee_id,
+                post_id=body.post_id,
+                reason=body.reason,
+            )
         )
-        db.session.add(new_report)
         db.session.commit()
         return jsonify({"message": "Post reported successfully"}), 201
 
