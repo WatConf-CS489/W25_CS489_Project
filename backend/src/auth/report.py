@@ -14,9 +14,9 @@ class Report(DBModel):
     reason: Mapped[str] = mapped_column(Text, nullable=False)
     resolved_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    reporter: Mapped['User'] = relationship("User", foreign_keys=[reporter_id], backref="reports_made")
-    reportee: Mapped['User'] = relationship("User", foreign_keys=[reportee_id], backref="reports_received")
-    post: Mapped['Post'] = relationship("Post", backref="reports")
+    reporter: Mapped['User'] = relationship("User", foreign_keys=[reporter_id], back_populates="reports_made")
+    reportee: Mapped['User'] = relationship("User", foreign_keys=[reportee_id], back_populates="reports_received")
+    post: Mapped['Post'] = relationship("Post", back_populates="reports")
 
     def __repr__(self):
         return f"<Report {self.id} by {self.reporter_id} on {self.post_id}>"
