@@ -50,7 +50,7 @@ export default function Page() {
         });
         const finishResponseJson = await finishResponse.json();
         if (finishResponseJson.verified) {
-          router.push("/");
+          router.push("/user/dashboard");
         } else {
           setError(true);
           setLoading(false);
