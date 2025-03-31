@@ -1,10 +1,19 @@
 "use client";
 
-import { AppBar, Button, IconButton, IconButtonProps, Link, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Button,
+  IconButton,
+  IconButtonProps,
+  Link,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import { Box, styled } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
 
 import { BoldText } from "./Utils";
+import LogoutButton from "./LogoutButton";
 
 const StickyHeader = styled(AppBar)({
   position: "sticky",
@@ -51,7 +60,13 @@ const ProfileButton = styled(IconButton)<IconButtonProps>({
   aspectRatio: "1",
 });
 
-export default function PageHeader({ hasPostButton }: { hasPostButton: boolean }) {
+export default function PageHeader({
+  hasPostButton,
+  isMod,
+}: {
+  hasPostButton: boolean;
+  isMod: boolean;
+}) {
   return (
     <>
       <StickyHeader>
@@ -64,23 +79,45 @@ export default function PageHeader({ hasPostButton }: { hasPostButton: boolean }
             </Typography>
           </LeftChild>
           <RightChild>
-            {hasPostButton &&
-            <a href="/user/post">
-              <PostButton variant="contained">
-                <Box sx={{ paddingLeft: "1vw", paddingRight: "1vw" }}>
-                <Typography variant="h6">
-                  <BoldText sx={{ color: "#000000" }}>Post</BoldText>
-                </Typography>
-                </Box>
+            {isMod ? (
+              <PostButton variant="contained" sx={{ marginRight: "10px" }}>
+                <a href="/mod/dashboard">
+                  <Box
+                    sx={{
+                      paddingLeft: "1vw",
+                      paddingRight: "1vw",
+                    }}
+                  >
+                    <Typography variant="h6">
+                      <BoldText sx={{ color: "#000000" }}>Dashboard</BoldText>
+                    </Typography>
+                  </Box>
+                </a>
               </PostButton>
-            </a>}
-            <Box sx={{ display: "flex", marginLeft: "3vw" }}>
-              <a href="/user/profile">
-                <ProfileButton>
-                  <PersonIcon sx={{ color: "#000000" }} />
-                </ProfileButton>
-              </a>
-            </Box>
+            ) : (
+              hasPostButton && (
+                <a href="/user/post">
+                  <PostButton variant="contained">
+                    <Box sx={{ paddingLeft: "1vw", paddingRight: "1vw" }}>
+                      <Typography variant="h6">
+                        <BoldText sx={{ color: "#000000" }}>Post</BoldText>
+                      </Typography>
+                    </Box>
+                  </PostButton>
+                </a>
+              )
+            )}
+            {isMod ? (
+              <LogoutButton />
+            ) : (
+              <Box sx={{ display: "flex", marginLeft: "3vw" }}>
+                <a href="/user/profile">
+                  <ProfileButton>
+                    <PersonIcon sx={{ color: "#000000" }} />
+                  </ProfileButton>
+                </a>
+              </Box>
+            )}
           </RightChild>
         </StyledToolbar>
       </StickyHeader>
