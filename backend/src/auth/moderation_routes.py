@@ -51,7 +51,7 @@ def get_post_text():
         select(Post).where(Post.id == post_id)
     ).scalar_one_or_none()
 
-    if not post or post.is_deleted(post):
+    if not post or post.is_deleted:
         return jsonify({"error": "Post not found or already deleted."}), 404
 
     return jsonify({"content": post.content})
@@ -71,7 +71,7 @@ def remove_post():
         select(Post).where(Post.id == post_id)
     ).scalar_one_or_none()
 
-    if not post or post.is_deleted(post):
+    if not post or post.is_deleted:
         return jsonify({"error": "Post not found or already deleted."}), 404
 
     post.deleted_at = datetime.now(timezone.utc)
