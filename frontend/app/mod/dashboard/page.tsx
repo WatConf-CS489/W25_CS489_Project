@@ -34,8 +34,8 @@ const reportSchema = yup.object({
   reporter_id: yup.string().required(),
   reportee_id: yup.string().required(),
   post_id: yup.string().required(),
-  post_text: yup.string().required(),
-  report_text: yup.string().required(),
+  post_content: yup.string().required(),
+  reason: yup.string().required(),
 });
 
 const responseSchema = yup.array().of(reportSchema).required();
@@ -53,16 +53,16 @@ export default function Page() {
       reporter_id: "1",
       reportee_id: "3",
       post_id: "4",
-      post_text: "post text 1",
-      report_text: "report text 1",
+      post_content: "post text 1",
+      reason: "report text 1",
     },
     {
       id: 2,
       reporter_id: "2",
       reportee_id: "4",
       post_id: "10",
-      post_text: "post text 2",
-      report_text: "report text 2",
+      post_content: "post text 2",
+      reason: "report text 2",
     },
   ];
 
@@ -85,12 +85,29 @@ export default function Page() {
     queryFn: fetchReports,
   });
 
-  const dismissReport = (reportId: number) => {
-    queryClient.setQueryData(["user"], (oldData: ReportType[]) => {
-      if (!oldData) return oldData;
-      return oldData.filter((report: ReportType) => report.id !== reportId);
-    });
-  };
+  const dismissReport = useCallback(async (reportId: number) => {
+    try {
+      const response = await fetch(`${API_URL}/moderation/resolve-report`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ report_id: reportId }),
+      });
+      if (response.ok) {
+        // Also remove it from frontend
+        queryClient.setQueryData(["user"], (oldData: ReportType[]) => {
+          if (!oldData) return oldData;
+          return oldData.filter((report: ReportType) => report.id !== reportId);
+        });
+        setSuccess(true);
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
+    }
+  }, []);
 
   const removePost = useCallback(async (postId: string, reportId: number) => {
     try {
@@ -184,13 +201,33 @@ export default function Page() {
                           align="center"
                           sx={{ borderBottom: "transparent" }}
                         >
-                          {row.reporter_id}
+                          <Tooltip title={row.reporter_id} arrow>
+                            <Typography
+                              variant="body1"
+                              sx={{ textDecoration: "underline" }}
+                              component="p"
+                            >
+                              {row.reporter_id.length > 8
+                                ? row.reporter_id.substring(0, 8)
+                                : row.reporter_id}
+                            </Typography>
+                          </Tooltip>
                         </TableCell>
                         <TableCell
                           align="center"
                           sx={{ borderBottom: "transparent" }}
                         >
-                          {row.reportee_id}
+                          <Tooltip title={row.reportee_id} arrow>
+                            <Typography
+                              variant="body1"
+                              sx={{ textDecoration: "underline" }}
+                              component="p"
+                            >
+                              {row.reportee_id.length > 8
+                                ? row.reportee_id.substring(0, 8)
+                                : row.reportee_id}
+                            </Typography>
+                          </Tooltip>
                         </TableCell>
                         <TableCell
                           align="center"
@@ -206,7 +243,7 @@ export default function Page() {
                               justifyContent: "center",
                             }}
                           >
-                            <Tooltip title={row.post_text} arrow>
+                            <Tooltip title={row.post_content} arrow>
                               <Typography
                                 variant="body1"
                                 sx={{
@@ -218,7 +255,7 @@ export default function Page() {
                                 Read post
                               </Typography>
                             </Tooltip>
-                            <Tooltip title={row.report_text} arrow>
+                            <Tooltip title={row.reason} arrow>
                               <Typography
                                 variant="body1"
                                 sx={{
