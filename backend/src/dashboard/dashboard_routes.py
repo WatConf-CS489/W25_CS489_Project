@@ -20,8 +20,7 @@ def read_all_posts():
     try:
         all_posts = db.session.execute(
             select(Post)
-            .join(Post.user)
-            .where(User.deleted_at.is_(None), Post.deleted_at.is_(None))
+            .where(Post.deleted_at.is_(None))
             .order_by(desc(Post.created_at))
         ).scalars().all()
 
