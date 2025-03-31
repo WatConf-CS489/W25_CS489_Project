@@ -47,11 +47,17 @@ To get intellisense when working on the frontend locally,
 
 ## Production
 
-Set `PROD=1`:
+### Staging
+
+Set `PROD=1` to build the staging environment:
 
 ```bash
 make PROD=1
 ```
+
+### Live
+
+The live server is at <https://watconf.kabir.dev>. We implement Continuous Delivery with a GitHub Action that automatically builds and deploys the tip of `main` to this environment. You can mimic this environment locally with `make LIVE=1`.
 
 ## Testing
 
@@ -63,3 +69,12 @@ You can run the fuzzer with `./scripts/fuzz.sh <target> [args...]`. For example,
 ```
 
 To list all available fuzz targets, run `./scripts/fuzz.sh` by itself.
+
+### Unit Tests
+
+We use `pytest` for unit tests, and this is automatically run in a CI action. You can run the tests yourself with
+
+```bash
+make shell
+$ pytest
+```
