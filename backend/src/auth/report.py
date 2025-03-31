@@ -1,5 +1,5 @@
 from src.base import DBModel
-from sqlalchemy import UUID, ForeignKey, Integer, Text
+from sqlalchemy import UUID, ForeignKey, Integer, Text, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.auth.user import User
 from src.posts.post import Post
@@ -12,6 +12,7 @@ class Report(DBModel):
     reportee_id: Mapped[UUID] = mapped_column(UUID, ForeignKey("user.id"), nullable=False)
     post_id: Mapped[UUID] = mapped_column(UUID, ForeignKey("posts.id"), nullable=False)
     reason: Mapped[str] = mapped_column(Text, nullable=False)
+    resolved_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     reporter: Mapped['User'] = relationship("User", foreign_keys=[reporter_id], backref="reports_made")
     reportee: Mapped['User'] = relationship("User", foreign_keys=[reportee_id], backref="reports_received")
