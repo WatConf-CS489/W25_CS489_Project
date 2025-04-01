@@ -66,6 +66,7 @@ export default function Page() {
     [router, remember]
   );
 
+  // This allows the browser to autofill passkeys
   useEffect(
     () => {
       submit(null);
