@@ -2,11 +2,18 @@ services:
   frontend:
     build:
       dockerfile: Dockerfile.prod
+    restart: always
   backend:
     env_file:
       - backend/envs/live.env
     build:
       dockerfile: Dockerfile.prod
+    restart: always
+  db:
+    restart: always
+  redis:
+    restart: always
   nginx:
     build:
       dockerfile: Dockerfile.live
+    restart: always
