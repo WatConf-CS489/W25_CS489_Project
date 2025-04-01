@@ -13,7 +13,7 @@ import {
   Button,
   CircularProgress,
   IconButton,
-  List,
+  Modal,
   Snackbar,
   Table,
   TableBody,
@@ -24,7 +24,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Box, styled } from "@mui/system";
+import { Box, Stack, styled } from "@mui/system";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { BoldText } from "@/components/Utils";
@@ -42,10 +42,28 @@ const responseSchema = yup.array().of(reportSchema).required();
 
 type ReportType = yup.InferType<typeof reportSchema>;
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "25%",
+  bgcolor: "#ffffff",
+  boxShadow: 24,
+  outline: "none",
+  p: 4,
+};
+
 export default function Page() {
   const queryClient = useQueryClient();
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [rowId, setRowId] = useState(0);
+  const [postId, setPostId] = useState("");
+  const [dismissOpen, setDismissOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const temp_fallback_reports: ReportType[] = [
     {
@@ -86,6 +104,7 @@ export default function Page() {
   });
 
   const dismissReport = useCallback(async (reportId: number) => {
+    setLoading(true);
     try {
       const response = await fetch(`${API_URL}/moderation/resolve-report`, {
         method: "POST",
@@ -101,15 +120,22 @@ export default function Page() {
           return oldData.filter((report: ReportType) => report.id !== reportId);
         });
         setSuccess(true);
+        setLoading(false);
+        setDismissOpen(false);
       } else {
         setError(true);
+        setLoading(false);
+        setDismissOpen(false);
       }
     } catch {
       setError(true);
+      setLoading(false);
+      setDismissOpen(false);
     }
   }, []);
 
   const removePost = useCallback(async (postId: string, reportId: number) => {
+    setLoading(true);
     try {
       const response = await fetch(`${API_URL}/moderation/remove-post`, {
         method: "POST",
@@ -120,11 +146,16 @@ export default function Page() {
       });
       if (response.ok) {
         dismissReport(reportId);
+        setDeleteOpen(false);
       } else {
         setError(true);
+        setLoading(false);
+        setDeleteOpen(false);
       }
     } catch {
       setError(true);
+      setLoading(false);
+      setDeleteOpen(false);
     }
   }, []);
 
@@ -278,7 +309,12 @@ export default function Page() {
                             sx={{ marginRight: "10px" }}
                             arrow
                           >
-                            <IconButton onClick={() => dismissReport(row.id)}>
+                            <IconButton
+                              onClick={() => {
+                                setRowId(row.id);
+                                setDismissOpen(true);
+                              }}
+                            >
                               <RemoveCircleOutlineIcon
                                 sx={{ color: "#ff0000" }}
                               />
@@ -290,7 +326,11 @@ export default function Page() {
                             arrow
                           >
                             <IconButton
-                              onClick={() => removePost(row.post_id, row.id)}
+                              onClick={() => {
+                                setRowId(row.id);
+                                setPostId(row.post_id);
+                                setDeleteOpen(true);
+                              }}
                             >
                               <DeleteIcon sx={{ color: "#ff0000" }} />
                             </IconButton>
@@ -317,6 +357,56 @@ export default function Page() {
               <CircularProgress />
             </Box>
           )}
+          <Modal open={dismissOpen} disableEnforceFocus>
+            <Stack sx={style} spacing={1}>
+              <Typography align="center" variant="h4">
+                Are you sure you want to dismiss this report?
+              </Typography>
+              <Button
+                type="submit"
+                loading={loading}
+                variant="contained"
+                sx={{ backgroundColor: "#FF0000", color: "#000000" }}
+                onClick={() => dismissReport(rowId)}
+              >
+                Yes, dismiss it
+              </Button>
+              <Button
+                type="submit"
+                loading={loading}
+                variant="outlined"
+                sx={{ color: "#3A3A3A" }}
+                onClick={() => setDismissOpen(false)}
+              >
+                No, never mind
+              </Button>
+            </Stack>
+          </Modal>
+          <Modal open={deleteOpen} disableEnforceFocus>
+            <Stack sx={style} spacing={1}>
+              <Typography align="center" variant="h4">
+                Are you sure you want to delete this post?
+              </Typography>
+              <Button
+                type="submit"
+                loading={loading}
+                variant="contained"
+                sx={{ backgroundColor: "#FF0000", color: "#000000" }}
+                onClick={() => removePost(postId, rowId)}
+              >
+                Yes, delete it
+              </Button>
+              <Button
+                type="submit"
+                loading={loading}
+                variant="outlined"
+                sx={{ color: "#3A3A3A" }}
+                onClick={() => setDeleteOpen(false)}
+              >
+                No, never mind
+              </Button>
+            </Stack>
+          </Modal>
           <Snackbar
             open={error || success}
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
