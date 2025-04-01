@@ -14,10 +14,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta
+          http-equiv="Content-Security-Policy"
+          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+        />
+      </head>
       <body>
-        <RootQueryProvider>
-          {children}
-        </RootQueryProvider>
+        <RootQueryProvider>{children}</RootQueryProvider>
       </body>
     </html>
   );
