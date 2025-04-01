@@ -3,7 +3,7 @@ from openai.types.moderation import CategoryScores
 
 def min_scores_to_flag():
     return {
-        # "harassment": 0.5,
+        "harassment": 0.7,
         "harassment_threatening": 0.9,
         # "hate": 0.5,
         "hate_threatening": 0.9,

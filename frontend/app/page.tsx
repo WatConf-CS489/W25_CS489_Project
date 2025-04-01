@@ -66,6 +66,15 @@ export default function Page() {
     [router, remember]
   );
 
+  // This allows the browser to autofill passkeys
+  useEffect(
+    () => {
+      submit(null);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);

@@ -38,7 +38,7 @@ export default function Page() {
 
   const [submit, setSubmit] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | boolean | null>(null);
   const [loading, setLoading] = useState(false);
 
   const postConfession = useCallback(async (content: string | null) => {
@@ -56,8 +56,13 @@ export default function Page() {
         setContent("");
         setSubmit(true);
       } else {
-        setError(true);
         setLoading(false);
+        const json = await response.json();
+        if (json.error) {
+          setError(json.error);
+        } else {
+          setError(true);
+        }
       }
     } catch {
       setError(true);
@@ -182,7 +187,7 @@ export default function Page() {
               </>
             )}
             <Snackbar
-              open={error || success}
+              open={!!error || success}
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               autoHideDuration={3000}
               onClose={() => {
@@ -197,7 +202,7 @@ export default function Page() {
                   sx={{ width: "100%" }}
                   onClose={() => setError(false)}
                 >
-                  An error occurred.
+                  {typeof error === "string" ? `Error: ${error}` : "An unknown error occurred."}
                 </Alert>
               ) : success ? (
                 <Alert

@@ -7,7 +7,7 @@ def test_moderation_basic(
     mock_scores_for_post,
 ):
     mock_scores_for_post.side_effect = lambda post: {
-        "harassment": 1.0,
+        "harassment": 0.6,
         "harassment_threatening": 0.95 if "gun" in post else 0.1,
         "hate": 0.1,
         "hate_threatening": 0.1,
